@@ -161,6 +161,43 @@ private void inorderRecursivo(NodoAVL nodo) {
         inorderRecursivo(nodo.derecha);
     }
 }
+
+// RECORRIDO PREORDER AVL
+public void preorder() {
+
+    preorderRecursivo(raiz);
+}
+
+private void preorderRecursivo(NodoAVL nodo) {
+
+    if (nodo != null) {
+
+        System.out.println(nodo.cancion);
+
+        preorderRecursivo(nodo.izquierda);
+
+        preorderRecursivo(nodo.derecha);
+    }
+}
+
+// RECORRIDO POSTORDER AVL
+public void postorder() {
+
+    postorderRecursivo(raiz);
+}
+
+private void postorderRecursivo(NodoAVL nodo) {
+
+    if (nodo != null) {
+
+        postorderRecursivo(nodo.izquierda);
+
+        postorderRecursivo(nodo.derecha);
+
+        System.out.println(nodo.cancion);
+    }
+}
+
 // BUSCAR CANCION
 public Cancion buscar(String nombre) {
 

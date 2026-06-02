@@ -173,6 +173,12 @@ System.out.println("RECORRIDO INORDER AVL:");
 
 avl.inorder();
 
+System.out.println("PREORDER AVL:");
+avl.preorder();
+
+System.out.println("POSTORDER AVL:");
+avl.postorder();
+
 System.out.println("BUSQUEDA ABB:");
 
 Cancion resultadoABB = abb.buscar("Shape of You");
@@ -222,6 +228,23 @@ long tiempoAVL = finAVL - inicioAVL;
 
 System.out.println("Tiempo busqueda ABB: " + tiempoABB + " nanosegundos");
 System.out.println("Tiempo busqueda AVL: " + tiempoAVL + " nanosegundos");
+
+
+System.out.println("========== LISTA CIRCULAR ==========");
+
+listas.ListaCircular circular = new listas.ListaCircular();
+
+circular.insertar(c1);
+circular.insertar(c2);
+circular.insertar(c3);
+
+System.out.println("LISTA CIRCULAR:");
+
+circular.mostrar();
+
+System.out.println("REPRODUCCION INFINITA SIMULADA:");
+
+circular.reproducirInfinito(6);
     }
 }
     
