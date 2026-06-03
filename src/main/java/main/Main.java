@@ -289,6 +289,7 @@ System.out.println("Tiempo busqueda ABB: " + tiempoABB + " nanosegundos");
 System.out.println("Tiempo busqueda AVL: " + tiempoAVL + " nanosegundos");
 
 
+
 System.out.println("========== LISTA CIRCULAR ==========");
 
 listas.ListaCircular circular = new listas.ListaCircular();
@@ -304,6 +305,21 @@ circular.mostrar();
 System.out.println("REPRODUCCION INFINITA SIMULADA:");
 
 circular.reproducirInfinito(6);
+
+
+System.out.println("========== TABLA HASH ARTISTAS ==========");
+
+hash.TablaHashArtistas hashArtistas = new hash.TablaHashArtistas(10);
+
+hashArtistas.insertar(c1);
+hashArtistas.insertar(c2);
+hashArtistas.insertar(c3);
+
+hashArtistas.mostrarTabla();
+
+System.out.println("BUSCAR POR ARTISTA EN HASH:");
+
+hashArtistas.buscarPorArtista("Imagine Dragons");
     }
 }
     
