@@ -349,6 +349,37 @@ lector.cargarCanciones(
 System.out.println("CANCIONES CARGADAS DESDE CARPETA:");
 
 listaReal.mostrar();
+
+System.out.println("========== CARGA REAL EN ESTRUCTURAS ==========");
+
+listas.ListaSimple listaReal2 = new listas.ListaSimple();
+arboles.ABB abbReal = new arboles.ABB();
+arboles.AVL avlReal = new arboles.AVL();
+hash.TablaHashArtistas hashArtistasReal = new hash.TablaHashArtistas(20);
+hash.TablaHashGeneros hashGenerosReal = new hash.TablaHashGeneros(20);
+
+archivos.LectorMusica lector2 = new archivos.LectorMusica();
+
+lector2.cargarCancionesEstructuras(
+        "C:\\Users\\Aderson\\Desktop\\Musica",
+        listaReal2,
+        abbReal,
+        avlReal,
+        hashArtistasReal,
+        hashGenerosReal
+);
+
+System.out.println("LISTA REAL:");
+listaReal2.mostrar();
+
+System.out.println("ABB REAL INORDER:");
+abbReal.inorder();
+
+System.out.println("AVL REAL INORDER:");
+avlReal.inorder();
+
+System.out.println("HASH ARTISTAS REAL:");
+hashArtistasReal.buscarPorArtista("My Morning Jacket");
     }
 }
     
