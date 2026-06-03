@@ -145,5 +145,70 @@ public boolean modificar(String nombre, String nuevoArtista, String nuevoAlbum,
     return true;
 }
 
+// ELIMINAR CANCION
+public void eliminar(String nombre) {
+
+    raiz = eliminarRecursivo(raiz, nombre);
+}
+
+private NodoABB eliminarRecursivo(NodoABB nodo, String nombre) {
+
+    if (nodo == null) {
+
+        return null;
+    }
+
+    if (nombre.compareToIgnoreCase(nodo.cancion.getNombre()) < 0) {
+
+        nodo.izquierda = eliminarRecursivo(nodo.izquierda, nombre);
+
+    } else if (nombre.compareToIgnoreCase(nodo.cancion.getNombre()) > 0) {
+
+        nodo.derecha = eliminarRecursivo(nodo.derecha, nombre);
+
+    } else {
+
+        // CASO 1: SIN HIJOS
+        if (nodo.izquierda == null && nodo.derecha == null) {
+
+            return null;
+        }
+
+        // CASO 2: SOLO HIJO DERECHO
+        if (nodo.izquierda == null) {
+
+            return nodo.derecha;
+        }
+
+        // CASO 2: SOLO HIJO IZQUIERDO
+        if (nodo.derecha == null) {
+
+            return nodo.izquierda;
+        }
+
+        // CASO 3: DOS HIJOS
+        NodoABB sucesor = encontrarMinimo(nodo.derecha);
+
+        nodo.cancion = sucesor.cancion;
+
+        nodo.derecha = eliminarRecursivo(
+                nodo.derecha,
+                sucesor.cancion.getNombre()
+        );
+    }
+
+    return nodo;
+}
+
+private NodoABB encontrarMinimo(NodoABB nodo) {
+
+    while (nodo.izquierda != null) {
+
+        nodo = nodo.izquierda;
+    }
+
+    return nodo;
+}
+
 }
 

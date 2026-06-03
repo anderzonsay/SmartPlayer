@@ -214,6 +214,14 @@ if (modificado) {
     System.out.println("No se encontro la cancion para modificar");
 }
 
+System.out.println("ELIMINAR EN ABB:");
+
+abb.eliminar("Thunder");
+
+System.out.println("ABB DESPUES DE ELIMINAR THUNDER:");
+
+abb.inorder();
+
 System.out.println("BUSQUEDA AVL:");
 
 Cancion resultadoAVL = avl.buscar("Shape of You");
