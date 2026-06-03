@@ -320,6 +320,20 @@ hashArtistas.mostrarTabla();
 System.out.println("BUSCAR POR ARTISTA EN HASH:");
 
 hashArtistas.buscarPorArtista("Imagine Dragons");
+
+System.out.println("========== TABLA HASH GENEROS ==========");
+
+hash.TablaHashGeneros hashGeneros = new hash.TablaHashGeneros(10);
+
+hashGeneros.insertar(c1);
+hashGeneros.insertar(c2);
+hashGeneros.insertar(c3);
+
+hashGeneros.mostrarTabla();
+
+System.out.println("BUSCAR POR GENERO EN HASH:");
+
+hashGeneros.buscarPorGenero("Rock");
     }
 }
     
