@@ -236,6 +236,35 @@ if (resultadoAVL != null) {
     System.out.println("No encontrada en AVL");
 }
 
+System.out.println("MODIFICAR EN AVL:");
+
+boolean modificadoAVL = avl.modificar(
+        "Shape of You",
+        "Ed Sheeran",
+        "Divide",
+        "Pop Latino",
+        4.5,
+        2018
+);
+
+if (modificadoAVL) {
+
+    System.out.println("Cancion modificada correctamente en AVL:");
+    System.out.println(avl.buscar("Shape of You"));
+
+} else {
+
+    System.out.println("No se encontro la cancion para modificar en AVL");
+}
+
+System.out.println("ELIMINAR EN AVL:");
+
+avl.eliminar("Thunder");
+
+System.out.println("AVL DESPUES DE ELIMINAR THUNDER:");
+
+avl.inorder();
+
 System.out.println("========== COMPARACION DE TIEMPOS ==========");
 
 long inicioABB = System.nanoTime();

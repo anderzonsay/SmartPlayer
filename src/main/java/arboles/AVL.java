@@ -230,6 +230,124 @@ private Cancion buscarRecursivo(NodoAVL nodo, String nombre) {
                 nodo.derecha,
                 nombre);
     }
+    
+    
+}
+
+// MODIFICAR CANCION EN AVL
+public boolean modificar(String nombre, String nuevoArtista, String nuevoAlbum,
+                         String nuevoGenero, double nuevaDuracion, int nuevoAño) {
+
+    Cancion encontrada = buscar(nombre);
+
+    if (encontrada == null) {
+
+        return false;
+    }
+
+    encontrada.setArtista(nuevoArtista);
+    encontrada.setAlbum(nuevoAlbum);
+    encontrada.setGenero(nuevoGenero);
+    encontrada.setDuracion(nuevaDuracion);
+    encontrada.setAño(nuevoAño);
+
+    return true;
+}
+
+// ELIMINAR CANCION EN AVL
+public void eliminar(String nombre) {
+
+    raiz = eliminarRecursivo(raiz, nombre);
+}
+
+private NodoAVL eliminarRecursivo(NodoAVL nodo, String nombre) {
+
+    if (nodo == null) {
+        return null;
+    }
+
+    if (nombre.compareToIgnoreCase(nodo.cancion.getNombre()) < 0) {
+
+        nodo.izquierda = eliminarRecursivo(nodo.izquierda, nombre);
+
+    } else if (nombre.compareToIgnoreCase(nodo.cancion.getNombre()) > 0) {
+
+        nodo.derecha = eliminarRecursivo(nodo.derecha, nombre);
+
+    } else {
+
+        if (nodo.izquierda == null || nodo.derecha == null) {
+
+            NodoAVL temp;
+
+            if (nodo.izquierda != null) {
+                temp = nodo.izquierda;
+            } else {
+                temp = nodo.derecha;
+            }
+
+            if (temp == null) {
+                nodo = null;
+            } else {
+                nodo = temp;
+            }
+
+        } else {
+
+            NodoAVL temp = encontrarMinimo(nodo.derecha);
+
+            nodo.cancion = temp.cancion;
+
+            nodo.derecha = eliminarRecursivo(
+                    nodo.derecha,
+                    temp.cancion.getNombre()
+            );
+        }
+    }
+
+    if (nodo == null) {
+        return null;
+    }
+
+    nodo.altura = maximo(
+            altura(nodo.izquierda),
+            altura(nodo.derecha)
+    ) + 1;
+
+    int balance = balance(nodo);
+
+    // Izquierda izquierda
+    if (balance > 1 && balance(nodo.izquierda) >= 0) {
+        return rotacionDerecha(nodo);
+    }
+
+    // Izquierda derecha
+    if (balance > 1 && balance(nodo.izquierda) < 0) {
+        nodo.izquierda = rotacionIzquierda(nodo.izquierda);
+        return rotacionDerecha(nodo);
+    }
+
+    // Derecha derecha
+    if (balance < -1 && balance(nodo.derecha) <= 0) {
+        return rotacionIzquierda(nodo);
+    }
+
+    // Derecha izquierda
+    if (balance < -1 && balance(nodo.derecha) > 0) {
+        nodo.derecha = rotacionDerecha(nodo.derecha);
+        return rotacionIzquierda(nodo);
+    }
+
+    return nodo;
+}
+
+private NodoAVL encontrarMinimo(NodoAVL nodo) {
+
+    while (nodo.izquierda != null) {
+        nodo = nodo.izquierda;
+    }
+
+    return nodo;
 }
 
 }
