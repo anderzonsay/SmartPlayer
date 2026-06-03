@@ -189,9 +189,31 @@ if (resultadoABB != null) {
     System.out.println(resultadoABB);
 
 } else {
-
+    
     System.out.println("No encontrada en ABB");
 }
+
+System.out.println("MODIFICAR EN ABB:");
+
+boolean modificado = abb.modificar(
+        "Believer",
+        "Imagine Dragons",
+        "Evolve",
+        "Rock Alternativo",
+        3.8,
+        2017
+);
+
+if (modificado) {
+
+    System.out.println("Cancion modificada correctamente:");
+    System.out.println(abb.buscar("Believer"));
+
+} else {
+
+    System.out.println("No se encontro la cancion para modificar");
+}
+
 System.out.println("BUSQUEDA AVL:");
 
 Cancion resultadoAVL = avl.buscar("Shape of You");

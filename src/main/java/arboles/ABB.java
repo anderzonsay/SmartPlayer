@@ -125,5 +125,25 @@ private Cancion buscarRecursivo(NodoABB nodo, String nombre) {
     }
 }
 
+// MODIFICAR CANCION
+public boolean modificar(String nombre, String nuevoArtista, String nuevoAlbum,
+                         String nuevoGenero, double nuevaDuracion, int nuevoAño) {
+
+    Cancion encontrada = buscar(nombre);
+
+    if (encontrada == null) {
+
+        return false;
+    }
+
+    encontrada.setArtista(nuevoArtista);
+    encontrada.setAlbum(nuevoAlbum);
+    encontrada.setGenero(nuevoGenero);
+    encontrada.setDuracion(nuevaDuracion);
+    encontrada.setAño(nuevoAño);
+
+    return true;
+}
+
 }
 

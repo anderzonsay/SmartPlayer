@@ -68,6 +68,34 @@ public class Cancion {
     public int getAño() {
         return año;
     }
+    
+    public void setArtista(String artista) {
+    this.artista = artista;
+}
+
+public void setAlbum(String album) {
+    this.album = album;
+}
+
+public void setGenero(String genero) {
+    this.genero = genero;
+}
+
+public void setRuta(String ruta) {
+    this.ruta = ruta;
+}
+
+public void setDuracion(double duracion) {
+    this.duracion = duracion;
+}
+
+public void setTamaño(double tamaño) {
+    this.tamaño = tamaño;
+}
+
+public void setAño(int año) {
+    this.año = año;
+}
 
     // MOSTRAR CANCION
     @Override
