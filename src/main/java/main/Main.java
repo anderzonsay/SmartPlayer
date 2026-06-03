@@ -334,6 +334,21 @@ hashGeneros.mostrarTabla();
 System.out.println("BUSCAR POR GENERO EN HASH:");
 
 hashGeneros.buscarPorGenero("Rock");
+
+System.out.println("========== CARGA DE MUSICA REAL ==========");
+
+listas.ListaSimple listaReal = new listas.ListaSimple();
+
+archivos.LectorMusica lector = new archivos.LectorMusica();
+
+lector.cargarCanciones(
+        "C:\\Users\\Aderson\\Desktop\\Musica",
+        listaReal
+);
+
+System.out.println("CANCIONES CARGADAS DESDE CARPETA:");
+
+listaReal.mostrar();
     }
 }
     
