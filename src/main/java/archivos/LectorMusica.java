@@ -3,6 +3,9 @@ package archivos;
 import java.io.File;
 import listas.ListaSimple;
 import modelos.Cancion;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.Tag;
 
 public class LectorMusica {
 
