@@ -97,6 +97,15 @@ public void setAño(int año) {
     this.año = año;
 }
 
+public String getDuracionFormateada() {
+
+    int minutos = (int) duracion;
+
+    int segundos = (int) ((duracion - minutos) * 60);
+
+    return String.format("%02d:%02d", minutos, segundos);
+}
+
     // MOSTRAR CANCION
     @Override
     public String toString() {
@@ -105,7 +114,7 @@ public void setAño(int año) {
                "\nArtista: " + artista +
                "\nAlbum: " + album +
                "\nGenero: " + genero +
-               "\nDuracion: " + duracion +
+               "\nDuracion: " + getDuracionFormateada() +
                "\n";
     }
 }
