@@ -383,9 +383,28 @@ Cancion cancionPrueba = listaReal2.obtenerPrimera();
 
 if (cancionPrueba != null) {
 
-    reproductor.ReproductorMP3 reproductor = new reproductor.ReproductorMP3();
+    try {
 
-    reproductor.reproducir(cancionPrueba.getRuta());
+        reproductor.ReproductorMP3 reproductor = new reproductor.ReproductorMP3();
+
+        reproductor.reproducir(cancionPrueba.getRuta());
+
+        Thread.sleep(5000);
+
+        reproductor.pausar();
+
+        Thread.sleep(3000);
+
+        reproductor.continuarReproduccion();
+
+        Thread.sleep(5000);
+
+        reproductor.detener();
+
+    } catch (InterruptedException e) {
+
+        System.out.println("Error en la pausa de la prueba del reproductor");
+    }
 
 } else {
 

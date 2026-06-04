@@ -55,5 +55,32 @@ public class ReproductorMP3 {
             }
         });
     }
+    
+    public void pausar() {
+
+    Platform.runLater(() -> {
+
+        if (player != null) {
+
+            player.pause();
+
+            System.out.println("Reproduccion pausada");
+        }
+    });
+}
+    
+   public void continuarReproduccion() {
+
+    Platform.runLater(() -> {
+
+        if (player != null) {
+
+            player.play();
+
+            System.out.println("Reproduccion reanudada");
+        }
+    });
+}
+    
 }
 
