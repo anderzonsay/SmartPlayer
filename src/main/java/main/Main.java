@@ -398,8 +398,38 @@ colaReal.mostrar();
 System.out.println("ABB REAL INORDER:");
 abbReal.inorder();
 
+abbReal.generarDot("abb_real.dot");
+
 System.out.println("AVL REAL INORDER:");
 avlReal.inorder();
+
+System.out.println("BUSQUEDA REAL EN ABB:");
+
+Cancion cancionABBReal = abbReal.buscar("Off The Record");
+
+if (cancionABBReal != null) {
+
+    System.out.println("Cancion encontrada en ABB REAL:");
+    System.out.println(cancionABBReal);
+
+} else {
+
+    System.out.println("Cancion no encontrada en ABB REAL");
+}
+
+System.out.println("BUSQUEDA REAL EN AVL:");
+
+Cancion cancionAVLReal = avlReal.buscar("Off The Record");
+
+if (cancionAVLReal != null) {
+
+    System.out.println("Cancion encontrada en AVL REAL:");
+    System.out.println(cancionAVLReal);
+
+} else {
+
+    System.out.println("Cancion no encontrada en AVL REAL");
+}
 
 System.out.println("HASH ARTISTAS REAL:");
 hashArtistasReal.buscarPorArtista("My Morning Jacket");

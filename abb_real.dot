@@ -1,0 +1,6 @@
+digraph ABB {
+node [shape=circle, style=filled, fillcolor=lightblue];
+"Wordless Chorus" -> "Off The Record";
+"Off The Record" -> "Outta My System";
+"Outta My System";
+}
