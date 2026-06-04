@@ -353,6 +353,8 @@ listaReal.mostrar();
 System.out.println("========== CARGA REAL EN ESTRUCTURAS ==========");
 
 listas.ListaSimple listaReal2 = new listas.ListaSimple();
+listas.ListaDoble dobleReal = new listas.ListaDoble();
+listas.ListaCircular circularReal = new listas.ListaCircular();
 arboles.ABB abbReal = new arboles.ABB();
 arboles.AVL avlReal = new arboles.AVL();
 hash.TablaHashArtistas hashArtistasReal = new hash.TablaHashArtistas(20);
@@ -362,7 +364,9 @@ archivos.LectorMusica lector2 = new archivos.LectorMusica();
 
 lector2.cargarCancionesEstructuras(
         "C:\\Users\\Aderson\\Desktop\\Musica",
-        listaReal2,
+         listaReal2,
+        dobleReal,
+        circularReal,
         abbReal,
         avlReal,
         hashArtistasReal,
@@ -371,6 +375,15 @@ lector2.cargarCancionesEstructuras(
 
 System.out.println("LISTA REAL:");
 listaReal2.mostrar();
+
+System.out.println("LISTA DOBLE REAL HACIA ADELANTE:");
+dobleReal.mostrarAdelante();
+
+System.out.println("LISTA CIRCULAR REAL:");
+circularReal.mostrar();
+
+System.out.println("REPRODUCCION CIRCULAR REAL SIMULADA:");
+circularReal.reproducirInfinito(6);
 
 System.out.println("ABB REAL INORDER:");
 abbReal.inorder();

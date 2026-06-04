@@ -7,6 +7,8 @@ import arboles.ABB;
 import arboles.AVL;
 import hash.TablaHashArtistas;
 import hash.TablaHashGeneros;
+import listas.ListaDoble;
+import listas.ListaCircular;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -108,6 +110,8 @@ public class LectorMusica {
     
     public void cargarCancionesEstructuras(String rutaCarpeta,
                                        ListaSimple lista,
+                                       ListaDoble doble,
+                                       ListaCircular circular,
                                        ABB abb,
                                        AVL avl,
                                        TablaHashArtistas hashArtistas,
@@ -197,11 +201,13 @@ public class LectorMusica {
                     año
             );
 
-            lista.insertar(cancion);
-            abb.insertar(cancion);
-            avl.insertar(cancion);
-            hashArtistas.insertar(cancion);
-            hashGeneros.insertar(cancion);
+ lista.insertar(cancion);
+doble.insertar(cancion);
+circular.insertar(cancion);
+abb.insertar(cancion);
+avl.insertar(cancion);
+hashArtistas.insertar(cancion);
+hashGeneros.insertar(cancion);
         }
     }
 }
