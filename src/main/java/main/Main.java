@@ -377,6 +377,21 @@ lector2.cargarCancionesEstructuras(
         hashGenerosReal
 );
 
+System.out.println("========== PRUEBA REPRODUCTOR ==========");
+
+Cancion cancionPrueba = listaReal2.obtenerPrimera();
+
+if (cancionPrueba != null) {
+
+    reproductor.ReproductorMP3 reproductor = new reproductor.ReproductorMP3();
+
+    reproductor.reproducir(cancionPrueba.getRuta());
+
+} else {
+
+    System.out.println("No hay canciones reales para reproducir");
+}
+
 System.out.println("LISTA REAL:");
 listaReal2.mostrar();
 

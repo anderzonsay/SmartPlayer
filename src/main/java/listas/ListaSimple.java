@@ -172,6 +172,16 @@ public class ListaSimple {
 
     System.out.println("Cancion eliminada");
 }
+   
+   public Cancion obtenerPrimera() {
+
+    if (cabeza == null) {
+        return null;
+    }
+
+    return cabeza.cancion;
+}
+   
 }
     
 
