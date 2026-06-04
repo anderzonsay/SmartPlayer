@@ -9,6 +9,8 @@ import hash.TablaHashArtistas;
 import hash.TablaHashGeneros;
 import listas.ListaDoble;
 import listas.ListaCircular;
+import pilas.Pila;
+import colas.Cola;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -112,6 +114,8 @@ public class LectorMusica {
                                        ListaSimple lista,
                                        ListaDoble doble,
                                        ListaCircular circular,
+                                       Pila pila,
+                                       Cola cola,
                                        ABB abb,
                                        AVL avl,
                                        TablaHashArtistas hashArtistas,
@@ -204,6 +208,8 @@ public class LectorMusica {
  lista.insertar(cancion);
 doble.insertar(cancion);
 circular.insertar(cancion);
+pila.push(cancion);
+cola.enqueue(cancion);
 abb.insertar(cancion);
 avl.insertar(cancion);
 hashArtistas.insertar(cancion);
