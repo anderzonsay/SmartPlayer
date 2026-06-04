@@ -1,6 +1,8 @@
 package arboles;
 
 import modelos.Cancion;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class AVL {
 
@@ -348,6 +350,58 @@ private NodoAVL encontrarMinimo(NodoAVL nodo) {
     }
 
     return nodo;
+}
+// GENERAR ARCHIVO DOT PARA GRAPHVIZ
+public void generarDot(String rutaArchivo) {
+
+    try {
+
+        FileWriter writer = new FileWriter(rutaArchivo);
+
+        writer.write("digraph AVL {\n");
+        writer.write("node [shape=circle, style=filled, fillcolor=lightgreen];\n");
+
+        generarDotRecursivo(raiz, writer);
+
+        writer.write("}\n");
+
+        writer.close();
+
+        System.out.println("Archivo DOT del AVL generado correctamente.");
+
+    } catch (IOException e) {
+
+        System.out.println("Error al generar archivo DOT del AVL.");
+    }
+}
+
+private void generarDotRecursivo(NodoAVL nodo, FileWriter writer) throws IOException {
+
+    if (nodo != null) {
+
+        String nombreNodo = nodo.cancion.getNombre();
+
+        if (nodo.izquierda != null) {
+
+            writer.write("\"" + nombreNodo + "\" -> \"" +
+                    nodo.izquierda.cancion.getNombre() + "\";\n");
+
+            generarDotRecursivo(nodo.izquierda, writer);
+        }
+
+        if (nodo.derecha != null) {
+
+            writer.write("\"" + nombreNodo + "\" -> \"" +
+                    nodo.derecha.cancion.getNombre() + "\";\n");
+
+            generarDotRecursivo(nodo.derecha, writer);
+        }
+
+        if (nodo.izquierda == null && nodo.derecha == null) {
+
+            writer.write("\"" + nombreNodo + "\";\n");
+        }
+    }
 }
 
 }

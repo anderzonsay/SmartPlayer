@@ -400,8 +400,22 @@ abbReal.inorder();
 
 abbReal.generarDot("abb_real.dot");
 
+graphviz.GeneradorImagenGraphviz generador = new graphviz.GeneradorImagenGraphviz();
+
+generador.generarImagen(
+        "abb_real.dot",
+        "abb_real.png"
+);
+
 System.out.println("AVL REAL INORDER:");
 avlReal.inorder();
+
+avlReal.generarDot("avl_real.dot");
+
+generador.generarImagen(
+        "avl_real.dot",
+        "avl_real.png"
+);
 
 System.out.println("BUSQUEDA REAL EN ABB:");
 

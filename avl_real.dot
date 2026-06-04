@@ -1,0 +1,7 @@
+digraph AVL {
+node [shape=circle, style=filled, fillcolor=lightgreen];
+"Outta My System" -> "Off The Record";
+"Off The Record";
+"Outta My System" -> "Wordless Chorus";
+"Wordless Chorus";
+}
