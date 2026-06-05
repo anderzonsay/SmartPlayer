@@ -1,22 +1,19 @@
-
 package modelos;
 
-
 public class Cancion {
-    
-     // ATRIBUTOS
+
     private String nombre;
     private String artista;
     private String album;
     private String genero;
     private String ruta;
+    private String rutaPortada;
 
     private double duracion;
     private double tamaño;
 
     private int año;
 
-    // CONSTRUCTOR
     public Cancion(String nombre,
                    String artista,
                    String album,
@@ -31,12 +28,12 @@ public class Cancion {
         this.album = album;
         this.genero = genero;
         this.ruta = ruta;
+        this.rutaPortada = null;
         this.duracion = duracion;
         this.tamaño = tamaño;
         this.año = año;
     }
 
-    // GETTERS
     public String getNombre() {
         return nombre;
     }
@@ -57,6 +54,10 @@ public class Cancion {
         return ruta;
     }
 
+    public String getRutaPortada() {
+        return rutaPortada;
+    }
+
     public double getDuracion() {
         return duracion;
     }
@@ -68,45 +69,47 @@ public class Cancion {
     public int getAño() {
         return año;
     }
-    
+
     public void setArtista(String artista) {
-    this.artista = artista;
-}
+        this.artista = artista;
+    }
 
-public void setAlbum(String album) {
-    this.album = album;
-}
+    public void setAlbum(String album) {
+        this.album = album;
+    }
 
-public void setGenero(String genero) {
-    this.genero = genero;
-}
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
 
-public void setRuta(String ruta) {
-    this.ruta = ruta;
-}
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
+    }
 
-public void setDuracion(double duracion) {
-    this.duracion = duracion;
-}
+    public void setRutaPortada(String rutaPortada) {
+        this.rutaPortada = rutaPortada;
+    }
 
-public void setTamaño(double tamaño) {
-    this.tamaño = tamaño;
-}
+    public void setDuracion(double duracion) {
+        this.duracion = duracion;
+    }
 
-public void setAño(int año) {
-    this.año = año;
-}
+    public void setTamaño(double tamaño) {
+        this.tamaño = tamaño;
+    }
 
-public String getDuracionFormateada() {
+    public void setAño(int año) {
+        this.año = año;
+    }
 
-    int minutos = (int) duracion;
+    public String getDuracionFormateada() {
 
-    int segundos = (int) ((duracion - minutos) * 60);
+        int minutos = (int) duracion;
+        int segundos = (int) ((duracion - minutos) * 60);
 
-    return String.format("%02d:%02d", minutos, segundos);
-}
+        return String.format("%02d:%02d", minutos, segundos);
+    }
 
-    // MOSTRAR CANCION
     @Override
     public String toString() {
 
@@ -118,5 +121,6 @@ public String getDuracionFormateada() {
                "\n";
     }
 }
+
     
 

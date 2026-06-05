@@ -182,6 +182,22 @@ public class ListaSimple {
     return cabeza.cancion;
 }
    
+   public java.util.ArrayList<Cancion> convertirAArrayList() {
+
+    java.util.ArrayList<Cancion> canciones = new java.util.ArrayList<>();
+
+    NodoSimple aux = cabeza;
+
+    while (aux != null) {
+
+        canciones.add(aux.cancion);
+
+        aux = aux.siguiente;
+    }
+
+    return canciones;
+}
+   
 }
     
 
