@@ -9,6 +9,7 @@ public class ReproductorMP3 {
 
     private MediaPlayer player;
     private static boolean iniciado = false;
+    private Runnable accionAlTerminar;
 
     public ReproductorMP3() {
 
@@ -32,6 +33,13 @@ public class ReproductorMP3 {
 
                 Media media = new Media(ruta);
                 player = new MediaPlayer(media);
+                
+                player.setOnEndOfMedia(() -> {
+
+    if (accionAlTerminar != null) {
+        accionAlTerminar.run();
+    }
+});
 
                 player.play();
 
@@ -80,6 +88,10 @@ public class ReproductorMP3 {
             System.out.println("Reproduccion reanudada");
         }
     });
+}
+   
+   public void setAccionAlTerminar(Runnable accionAlTerminar) {
+    this.accionAlTerminar = accionAlTerminar;
 }
     
 }

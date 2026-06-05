@@ -51,6 +51,11 @@ public class VentanaPrincipal extends JFrame {
 
         actualizarInformacion();
         conectarBotones();
+        
+        reproductor.setAccionAlTerminar(() -> {
+    SwingUtilities.invokeLater(() -> reproducirSiguiente());
+});
+        
     }
 
     private void crearPanelIzquierdo() {
@@ -294,7 +299,28 @@ public class VentanaPrincipal extends JFrame {
                 g.drawString("Sin portada", 100, 140);
             }
         }
+        
+        
+        
     }
+    
+    private void reproducirSiguiente() {
+
+    if (!canciones.isEmpty()) {
+
+        indiceActual++;
+
+        if (indiceActual >= canciones.size()) {
+            indiceActual = 0;
+        }
+
+        listaCanciones.setSelectedIndex(indiceActual);
+        actualizarInformacion();
+
+        Cancion actual = canciones.get(indiceActual);
+        reproductor.reproducir(actual.getRuta());
+    }
+}
 }
 
 
