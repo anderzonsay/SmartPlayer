@@ -7,31 +7,27 @@ import java.net.URL;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 
 import modelos.Cancion;
 import reproductor.ReproductorMP3;
 
 public class VentanaPrincipal extends JFrame {
 
-    private JLabel lblTitulo;
-    private JLabel lblArtista;
-    private JLabel lblAlbum;
-    private JLabel lblGenero;
-    private JLabel lblDuracion;
+    private JLabel lblTitulo, lblArtista, lblAlbum, lblGenero, lblDuracion;
+    private JLabel lblTiempoActual, lblTiempoTotal;
+    private JSlider sliderProgreso;
 
-    private JButton btnAnterior;
-    private JButton btnPlay;
-    private JButton btnPausa;
-    private JButton btnStop;
-    private JButton btnSiguiente;
-
+    private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
     private JList<String> listaCanciones;
 
     private ArrayList<Cancion> canciones;
     private int indiceActual = 0;
     private ReproductorMP3 reproductor;
-
     private PanelPortada panelPortada;
+    private Timer timerProgreso;
+
+    private boolean moviendoSlider = false;
 
     public VentanaPrincipal(ArrayList<Cancion> canciones) {
 
@@ -39,7 +35,7 @@ public class VentanaPrincipal extends JFrame {
         this.reproductor = new ReproductorMP3();
 
         setTitle("SmartPlayer");
-        setSize(1000, 650);
+        setSize(1000, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -47,15 +43,14 @@ public class VentanaPrincipal extends JFrame {
 
         crearPanelIzquierdo();
         crearPanelCentral();
-        crearPanelInferior();
 
         actualizarInformacion();
         conectarBotones();
-        
+        iniciarTimerProgreso();
+
         reproductor.setAccionAlTerminar(() -> {
-    SwingUtilities.invokeLater(() -> reproducirSiguiente());
-});
-        
+            SwingUtilities.invokeLater(() -> reproducirSiguiente());
+        });
     }
 
     private void crearPanelIzquierdo() {
@@ -113,32 +108,74 @@ public class VentanaPrincipal extends JFrame {
         lblGenero = crearLabel("", 20, false);
         lblDuracion = crearLabel("", 20, false);
 
-        panel.add(Box.createVerticalStrut(25));
-        panel.add(panelPortada);
         panel.add(Box.createVerticalStrut(20));
+        panel.add(panelPortada);
+        panel.add(Box.createVerticalStrut(15));
         panel.add(lblTitulo);
         panel.add(Box.createVerticalStrut(10));
         panel.add(lblArtista);
         panel.add(lblAlbum);
         panel.add(lblGenero);
         panel.add(lblDuracion);
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(crearPanelProgreso());
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(crearPanelBotones());
 
         add(panel, BorderLayout.CENTER);
     }
 
-    private JLabel crearLabel(String texto, int tamaño, boolean negrita) {
+    private JPanel crearPanelProgreso() {
 
-        JLabel label = new JLabel(texto);
-        label.setForeground(Color.WHITE);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setFont(new Font("Arial", negrita ? Font.BOLD : Font.PLAIN, tamaño));
-        return label;
+        JPanel panel = new JPanel(new BorderLayout(10, 0));
+        panel.setBackground(new Color(18, 18, 18));
+        panel.setMaximumSize(new Dimension(520, 30));
+
+        lblTiempoActual = new JLabel("00:00");
+        lblTiempoActual.setForeground(Color.WHITE);
+        lblTiempoActual.setFont(new Font("Consolas", Font.BOLD, 14));
+
+        lblTiempoTotal = new JLabel("00:00");
+        lblTiempoTotal.setForeground(Color.WHITE);
+        lblTiempoTotal.setFont(new Font("Consolas", Font.BOLD, 14));
+
+        sliderProgreso = new JSlider(0, 100, 0);
+        sliderProgreso.setBackground(new Color(18, 18, 18));
+        sliderProgreso.setForeground(new Color(30, 215, 96));
+        sliderProgreso.setPaintTicks(false);
+        sliderProgreso.setPaintLabels(false);
+        sliderProgreso.setFocusable(false);
+        sliderProgreso.setPreferredSize(new Dimension(390, 18));
+
+        sliderProgreso.addChangeListener((ChangeEvent e) -> {
+
+            if (sliderProgreso.getValueIsAdjusting()) {
+                moviendoSlider = true;
+            } else if (moviendoSlider) {
+
+                double total = reproductor.getDuracionTotalSegundos();
+
+                if (total > 0) {
+                    double nuevoTiempo = (sliderProgreso.getValue() / 100.0) * total;
+                    reproductor.moverA(nuevoTiempo);
+                }
+
+                moviendoSlider = false;
+            }
+        });
+
+        panel.add(lblTiempoActual, BorderLayout.WEST);
+        panel.add(sliderProgreso, BorderLayout.CENTER);
+        panel.add(lblTiempoTotal, BorderLayout.EAST);
+
+        return panel;
     }
 
-    private void crearPanelInferior() {
+    private JPanel crearPanelBotones() {
 
         JPanel panel = new JPanel();
         panel.setBackground(new Color(18, 18, 18));
+        panel.setMaximumSize(new Dimension(400, 45));
 
         btnAnterior = new JButton("⏮");
         btnPlay = new JButton("▶");
@@ -152,7 +189,16 @@ public class VentanaPrincipal extends JFrame {
         panel.add(btnStop);
         panel.add(btnSiguiente);
 
-        add(panel, BorderLayout.SOUTH);
+        return panel;
+    }
+
+    private JLabel crearLabel(String texto, int tamaño, boolean negrita) {
+
+        JLabel label = new JLabel(texto);
+        label.setForeground(Color.WHITE);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setFont(new Font("Arial", negrita ? Font.BOLD : Font.PLAIN, tamaño));
+        return label;
     }
 
     private void conectarBotones() {
@@ -160,50 +206,63 @@ public class VentanaPrincipal extends JFrame {
         btnPlay.addActionListener(e -> {
 
             if (!canciones.isEmpty()) {
-                Cancion actual = canciones.get(indiceActual);
-                reproductor.reproducir(actual.getRuta());
+
+                if (reproductor.estaPausado()) {
+                    reproductor.continuarReproduccion();
+                } else {
+                    Cancion actual = canciones.get(indiceActual);
+                    reproductor.reproducir(actual.getRuta());
+                }
             }
         });
 
         btnPausa.addActionListener(e -> reproductor.pausar());
 
-        btnStop.addActionListener(e -> reproductor.detener());
-
-        btnSiguiente.addActionListener(e -> {
-
-            if (!canciones.isEmpty()) {
-
-                indiceActual++;
-
-                if (indiceActual >= canciones.size()) {
-                    indiceActual = 0;
-                }
-
-                listaCanciones.setSelectedIndex(indiceActual);
-                actualizarInformacion();
-
-                Cancion actual = canciones.get(indiceActual);
-                reproductor.reproducir(actual.getRuta());
-            }
+        btnStop.addActionListener(e -> {
+            reproductor.detener();
+            sliderProgreso.setValue(0);
+            lblTiempoActual.setText("00:00");
         });
 
-        btnAnterior.addActionListener(e -> {
+        btnSiguiente.addActionListener(e -> reproducirSiguiente());
 
-            if (!canciones.isEmpty()) {
+        btnAnterior.addActionListener(e -> reproducirAnterior());
+    }
 
-                indiceActual--;
+    private void reproducirSiguiente() {
 
-                if (indiceActual < 0) {
-                    indiceActual = canciones.size() - 1;
-                }
+        if (!canciones.isEmpty()) {
 
-                listaCanciones.setSelectedIndex(indiceActual);
-                actualizarInformacion();
+            indiceActual++;
 
-                Cancion actual = canciones.get(indiceActual);
-                reproductor.reproducir(actual.getRuta());
+            if (indiceActual >= canciones.size()) {
+                indiceActual = 0;
             }
-        });
+
+            listaCanciones.setSelectedIndex(indiceActual);
+            actualizarInformacion();
+
+            Cancion actual = canciones.get(indiceActual);
+            reproductor.reproducir(actual.getRuta());
+        }
+    }
+
+    private void reproducirAnterior() {
+
+        if (!canciones.isEmpty()) {
+
+            indiceActual--;
+
+            if (indiceActual < 0) {
+                indiceActual = canciones.size() - 1;
+            }
+
+            listaCanciones.setSelectedIndex(indiceActual);
+            actualizarInformacion();
+
+            Cancion actual = canciones.get(indiceActual);
+            reproductor.reproducir(actual.getRuta());
+        }
     }
 
     private void actualizarInformacion() {
@@ -226,7 +285,43 @@ public class VentanaPrincipal extends JFrame {
         lblGenero.setText("Género: " + actual.getGenero());
         lblDuracion.setText("Duración: " + actual.getDuracionFormateada());
 
+        lblTiempoActual.setText("00:00");
+        lblTiempoTotal.setText(actual.getDuracionFormateada());
+        sliderProgreso.setValue(0);
+
         panelPortada.cargarPortada(actual.getRutaPortada());
+    }
+
+    private void iniciarTimerProgreso() {
+
+        timerProgreso = new Timer(1000, e -> {
+
+            if (moviendoSlider) {
+                return;
+            }
+
+            double actual = reproductor.getTiempoActualSegundos();
+            double total = reproductor.getDuracionTotalSegundos();
+
+            if (total > 0) {
+
+                int porcentaje = (int) ((actual / total) * 100);
+
+                sliderProgreso.setValue(porcentaje);
+                lblTiempoActual.setText(formatearTiempo(actual));
+                lblTiempoTotal.setText(formatearTiempo(total));
+            }
+        });
+
+        timerProgreso.start();
+    }
+
+    private String formatearTiempo(double segundosTotales) {
+
+        int minutos = (int) segundosTotales / 60;
+        int segundos = (int) segundosTotales % 60;
+
+        return String.format("%02d:%02d", minutos, segundos);
     }
 
     private class PanelPortada extends JPanel {
@@ -299,30 +394,5 @@ public class VentanaPrincipal extends JFrame {
                 g.drawString("Sin portada", 100, 140);
             }
         }
-        
-        
-        
-    }
-    
-    private void reproducirSiguiente() {
-
-    if (!canciones.isEmpty()) {
-
-        indiceActual++;
-
-        if (indiceActual >= canciones.size()) {
-            indiceActual = 0;
-        }
-
-        listaCanciones.setSelectedIndex(indiceActual);
-        actualizarInformacion();
-
-        Cancion actual = canciones.get(indiceActual);
-        reproductor.reproducir(actual.getRuta());
     }
 }
-}
-
-
-
-

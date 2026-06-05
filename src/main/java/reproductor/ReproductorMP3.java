@@ -10,11 +10,12 @@ public class ReproductorMP3 {
     private MediaPlayer player;
     private static boolean iniciado = false;
     private Runnable accionAlTerminar;
+    private boolean pausado = false;
 
     public ReproductorMP3() {
 
         if (!iniciado) {
-            new JFXPanel(); // inicia JavaFX en aplicación de consola
+            new JFXPanel();
             iniciado = true;
         }
     }
@@ -33,15 +34,16 @@ public class ReproductorMP3 {
 
                 Media media = new Media(ruta);
                 player = new MediaPlayer(media);
-                
+
                 player.setOnEndOfMedia(() -> {
 
-    if (accionAlTerminar != null) {
-        accionAlTerminar.run();
-    }
-});
+                    if (accionAlTerminar != null) {
+                        accionAlTerminar.run();
+                    }
+                });
 
                 player.play();
+                pausado = false;
 
                 System.out.println("Reproduciendo: " + rutaArchivo);
 
@@ -59,40 +61,70 @@ public class ReproductorMP3 {
 
             if (player != null) {
                 player.stop();
+                pausado = false;
                 System.out.println("Reproduccion detenida");
             }
         });
     }
-    
+
     public void pausar() {
 
+        Platform.runLater(() -> {
+
+            if (player != null) {
+                player.pause();
+                pausado = true;
+                System.out.println("Reproduccion pausada");
+            }
+        });
+    }
+
+    public void continuarReproduccion() {
+
+        Platform.runLater(() -> {
+
+            if (player != null) {
+                player.play();
+                pausado = false;
+                System.out.println("Reproduccion reanudada");
+            }
+        });
+    }
+
+    public double getTiempoActualSegundos() {
+
+        if (player == null) {
+            return 0;
+        }
+
+        return player.getCurrentTime().toSeconds();
+    }
+
+    public double getDuracionTotalSegundos() {
+
+        if (player == null || player.getTotalDuration() == null) {
+            return 0;
+        }
+
+        return player.getTotalDuration().toSeconds();
+    }
+
+    public boolean estaPausado() {
+        return pausado;
+    }
+
+    public void setAccionAlTerminar(Runnable accionAlTerminar) {
+        this.accionAlTerminar = accionAlTerminar;
+    }
+    
+    public void moverA(double segundos) {
+
     Platform.runLater(() -> {
 
         if (player != null) {
-
-            player.pause();
-
-            System.out.println("Reproduccion pausada");
+            player.seek(javafx.util.Duration.seconds(segundos));
         }
     });
 }
     
-   public void continuarReproduccion() {
-
-    Platform.runLater(() -> {
-
-        if (player != null) {
-
-            player.play();
-
-            System.out.println("Reproduccion reanudada");
-        }
-    });
 }
-   
-   public void setAccionAlTerminar(Runnable accionAlTerminar) {
-    this.accionAlTerminar = accionAlTerminar;
-}
-    
-}
-
