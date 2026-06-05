@@ -481,6 +481,11 @@ if (cancionAVLReal != null) {
 
 System.out.println("HASH ARTISTAS REAL:");
 hashArtistasReal.buscarPorArtista("My Morning Jacket");
+
+    javax.swing.SwingUtilities.invokeLater(() -> {
+    new interfaz.VentanaPrincipal().setVisible(true);
+});
+
     }
 }
     
