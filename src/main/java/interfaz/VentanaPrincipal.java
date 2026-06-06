@@ -13,6 +13,7 @@ import modelos.Cancion;
 import reproductor.ReproductorMP3;
 import hash.TablaHashArtistas;
 import hash.TablaHashGeneros;
+import estadisticas.EstadisticasMusicales;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -22,6 +23,8 @@ public class VentanaPrincipal extends JFrame {
 
     private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
     private JButton btnBuscar, btnLimpiar;
+    private JButton btnVerABB, btnVerAVL, btnEstadisticas;
+
     private JTextField txtBuscar;
     private JComboBox<String> cmbTipoBusqueda;
 
@@ -215,9 +218,13 @@ public class VentanaPrincipal extends JFrame {
 
     private JPanel crearPanelBotones() {
 
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(18, 18, 18));
-        panel.setMaximumSize(new Dimension(400, 45));
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setBackground(new Color(18, 18, 18));
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
+        panelPrincipal.setMaximumSize(new Dimension(650, 90));
+
+        JPanel panelReproduccion = new JPanel();
+        panelReproduccion.setBackground(new Color(18, 18, 18));
 
         btnAnterior = new JButton("⏮");
         btnPlay = new JButton("▶");
@@ -225,13 +232,27 @@ public class VentanaPrincipal extends JFrame {
         btnStop = new JButton("⏹");
         btnSiguiente = new JButton("⏭");
 
-        panel.add(btnAnterior);
-        panel.add(btnPlay);
-        panel.add(btnPausa);
-        panel.add(btnStop);
-        panel.add(btnSiguiente);
+        panelReproduccion.add(btnAnterior);
+        panelReproduccion.add(btnPlay);
+        panelReproduccion.add(btnPausa);
+        panelReproduccion.add(btnStop);
+        panelReproduccion.add(btnSiguiente);
 
-        return panel;
+        JPanel panelOpciones = new JPanel();
+        panelOpciones.setBackground(new Color(18, 18, 18));
+
+        btnVerABB = new JButton("🌳 ABB");
+        btnVerAVL = new JButton("🌳 AVL");
+        btnEstadisticas = new JButton("📊 Estadísticas");
+
+        panelOpciones.add(btnVerABB);
+        panelOpciones.add(btnVerAVL);
+        panelOpciones.add(btnEstadisticas);
+
+        panelPrincipal.add(panelReproduccion);
+        panelPrincipal.add(panelOpciones);
+
+        return panelPrincipal;
     }
 
     private JLabel crearLabel(String texto, int tamaño, boolean negrita) {
@@ -271,6 +292,66 @@ public class VentanaPrincipal extends JFrame {
 
         btnSiguiente.addActionListener(e -> reproducirSiguiente());
         btnAnterior.addActionListener(e -> reproducirAnterior());
+
+        btnVerABB.addActionListener(e -> abrirImagen("abb_real.png"));
+        btnVerAVL.addActionListener(e -> abrirImagen("avl_real.png"));
+
+        btnEstadisticas.addActionListener(e -> mostrarEstadisticas());
+    }
+
+    private void mostrarEstadisticas() {
+
+        if (canciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
+            return;
+        }
+
+        EstadisticasMusicales estadisticas = new EstadisticasMusicales(canciones);
+
+        Cancion masLarga = estadisticas.cancionMasLarga();
+        Cancion masCorta = estadisticas.cancionMasCorta();
+
+        String mensaje =
+                "ESTADÍSTICAS SMARTPLAYER\n\n" +
+                "Canciones cargadas: " + estadisticas.totalCanciones() + "\n\n" +
+                "Canción más larga:\n" +
+                masLarga.getNombre() + " - " + masLarga.getDuracionFormateada() + "\n\n" +
+                "Canción más corta:\n" +
+                masCorta.getNombre() + " - " + masCorta.getDuracionFormateada() + "\n\n" +
+                "Duración promedio:\n" +
+                formatearTiempo(estadisticas.promedioDuracion() * 60) + "\n\n" +
+                "Artistas diferentes: " + estadisticas.totalArtistas() + "\n" +
+                "Géneros diferentes: " + estadisticas.totalGeneros();
+
+        JOptionPane.showMessageDialog(
+                this,
+                mensaje,
+                "Estadísticas",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void abrirImagen(String nombreArchivo) {
+
+        try {
+
+            File archivo = new File(nombreArchivo);
+
+            if (archivo.exists()) {
+                Desktop.getDesktop().open(archivo);
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No se encontró el archivo: " + nombreArchivo
+                );
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al abrir la imagen: " + nombreArchivo
+            );
+        }
     }
 
     private void buscarCanciones() {
@@ -502,3 +583,5 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 }
+
+
