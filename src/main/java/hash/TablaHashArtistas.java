@@ -50,24 +50,33 @@ public class TablaHashArtistas {
 
     public void buscarPorArtista(String artista) {
 
-        int posicion = funcionHash(artista);
-
-        boolean encontrado = false;
+        ArrayList<Cancion> resultados = obtenerPorArtista(artista);
 
         System.out.println("Canciones del artista: " + artista);
 
-        for (Cancion c : tabla[posicion]) {
-
-            if (c.getArtista().equalsIgnoreCase(artista)) {
-
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron canciones de ese artista");
+        } else {
+            for (Cancion c : resultados) {
                 System.out.println(c);
-                encontrado = true;
             }
         }
+    }
 
-        if (!encontrado) {
-            System.out.println("No se encontraron canciones de ese artista");
+    public ArrayList<Cancion> obtenerPorArtista(String artista) {
+
+    ArrayList<Cancion> resultados = new ArrayList<>();
+
+    for (int i = 0; i < tamaño; i++) {
+
+        for (Cancion c : tabla[i]) {
+
+            if (c.getArtista().toLowerCase().contains(artista.toLowerCase())) {
+                resultados.add(c);
+            }
         }
     }
-}
 
+    return resultados;
+}
+}

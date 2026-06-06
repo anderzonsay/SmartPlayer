@@ -11,6 +11,8 @@ import javax.swing.event.ChangeEvent;
 
 import modelos.Cancion;
 import reproductor.ReproductorMP3;
+import hash.TablaHashArtistas;
+import hash.TablaHashGeneros;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -19,19 +21,33 @@ public class VentanaPrincipal extends JFrame {
     private JSlider sliderProgreso;
 
     private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
+    private JButton btnBuscar, btnLimpiar;
+    private JTextField txtBuscar;
+    private JComboBox<String> cmbTipoBusqueda;
+
     private JList<String> listaCanciones;
+    private DefaultListModel<String> modeloLista;
 
     private ArrayList<Cancion> canciones;
+    private ArrayList<Cancion> cancionesMostradas;
     private int indiceActual = 0;
+
+    private TablaHashArtistas hashArtistas;
+    private TablaHashGeneros hashGeneros;
+
     private ReproductorMP3 reproductor;
     private PanelPortada panelPortada;
     private Timer timerProgreso;
-
     private boolean moviendoSlider = false;
 
-    public VentanaPrincipal(ArrayList<Cancion> canciones) {
+    public VentanaPrincipal(ArrayList<Cancion> canciones,
+                            TablaHashArtistas hashArtistas,
+                            TablaHashGeneros hashGeneros) {
 
         this.canciones = canciones;
+        this.cancionesMostradas = new ArrayList<>(canciones);
+        this.hashArtistas = hashArtistas;
+        this.hashGeneros = hashGeneros;
         this.reproductor = new ReproductorMP3();
 
         setTitle("SmartPlayer");
@@ -56,20 +72,41 @@ public class VentanaPrincipal extends JFrame {
     private void crearPanelIzquierdo() {
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setPreferredSize(new Dimension(300, 0));
+        panel.setPreferredSize(new Dimension(320, 0));
         panel.setBackground(new Color(24, 24, 24));
 
         JLabel titulo = new JLabel("  Canciones");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
 
-        DefaultListModel<String> modelo = new DefaultListModel<>();
+        JPanel panelBusqueda = new JPanel();
+        panelBusqueda.setBackground(new Color(24, 24, 24));
+        panelBusqueda.setLayout(new BoxLayout(panelBusqueda, BoxLayout.Y_AXIS));
 
-        for (Cancion c : canciones) {
-            modelo.addElement(c.getNombre());
-        }
+        txtBuscar = new JTextField();
+        txtBuscar.setMaximumSize(new Dimension(280, 30));
 
-        listaCanciones = new JList<>(modelo);
+        cmbTipoBusqueda = new JComboBox<>(new String[]{"Canción", "Artista", "Género"});
+        cmbTipoBusqueda.setMaximumSize(new Dimension(280, 30));
+
+        btnBuscar = new JButton("Buscar");
+        btnLimpiar = new JButton("Limpiar");
+
+        JPanel panelBotonesBusqueda = new JPanel();
+        panelBotonesBusqueda.setBackground(new Color(24, 24, 24));
+        panelBotonesBusqueda.add(btnBuscar);
+        panelBotonesBusqueda.add(btnLimpiar);
+
+        panelBusqueda.add(Box.createVerticalStrut(8));
+        panelBusqueda.add(txtBuscar);
+        panelBusqueda.add(Box.createVerticalStrut(5));
+        panelBusqueda.add(cmbTipoBusqueda);
+        panelBusqueda.add(panelBotonesBusqueda);
+
+        modeloLista = new DefaultListModel<>();
+        llenarModeloLista(cancionesMostradas);
+
+        listaCanciones = new JList<>(modeloLista);
         listaCanciones.setBackground(new Color(30, 30, 30));
         listaCanciones.setForeground(Color.WHITE);
         listaCanciones.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -87,7 +124,12 @@ public class VentanaPrincipal extends JFrame {
             }
         });
 
-        panel.add(titulo, BorderLayout.NORTH);
+        JPanel panelSuperior = new JPanel(new BorderLayout());
+        panelSuperior.setBackground(new Color(24, 24, 24));
+        panelSuperior.add(titulo, BorderLayout.NORTH);
+        panelSuperior.add(panelBusqueda, BorderLayout.CENTER);
+
+        panel.add(panelSuperior, BorderLayout.NORTH);
         panel.add(new JScrollPane(listaCanciones), BorderLayout.CENTER);
 
         add(panel, BorderLayout.WEST);
@@ -203,14 +245,17 @@ public class VentanaPrincipal extends JFrame {
 
     private void conectarBotones() {
 
+        btnBuscar.addActionListener(e -> buscarCanciones());
+        btnLimpiar.addActionListener(e -> limpiarBusqueda());
+
         btnPlay.addActionListener(e -> {
 
-            if (!canciones.isEmpty()) {
+            if (!cancionesMostradas.isEmpty()) {
 
                 if (reproductor.estaPausado()) {
                     reproductor.continuarReproduccion();
                 } else {
-                    Cancion actual = canciones.get(indiceActual);
+                    Cancion actual = cancionesMostradas.get(indiceActual);
                     reproductor.reproducir(actual.getRuta());
                 }
             }
@@ -225,59 +270,120 @@ public class VentanaPrincipal extends JFrame {
         });
 
         btnSiguiente.addActionListener(e -> reproducirSiguiente());
-
         btnAnterior.addActionListener(e -> reproducirAnterior());
+    }
+
+    private void buscarCanciones() {
+
+        String texto = txtBuscar.getText().trim();
+        String tipo = cmbTipoBusqueda.getSelectedItem().toString();
+
+        if (texto.isEmpty()) {
+            limpiarBusqueda();
+            return;
+        }
+
+        ArrayList<Cancion> resultados = new ArrayList<>();
+
+        if (tipo.equals("Canción")) {
+
+            for (Cancion c : canciones) {
+                if (c.getNombre().toLowerCase().contains(texto.toLowerCase())) {
+                    resultados.add(c);
+                }
+            }
+
+        } else if (tipo.equals("Artista")) {
+
+            resultados = hashArtistas.obtenerPorArtista(texto);
+
+        } else if (tipo.equals("Género")) {
+
+            resultados = hashGeneros.obtenerPorGenero(texto);
+        }
+
+        cancionesMostradas = resultados;
+        indiceActual = 0;
+
+        llenarModeloLista(cancionesMostradas);
+
+        if (cancionesMostradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No se encontraron resultados");
+        }
+
+        actualizarInformacion();
+    }
+
+    private void limpiarBusqueda() {
+
+        txtBuscar.setText("");
+        cancionesMostradas = new ArrayList<>(canciones);
+        indiceActual = 0;
+        llenarModeloLista(cancionesMostradas);
+        actualizarInformacion();
+    }
+
+    private void llenarModeloLista(ArrayList<Cancion> lista) {
+
+        modeloLista.clear();
+
+        for (Cancion c : lista) {
+            modeloLista.addElement(c.getNombre());
+        }
     }
 
     private void reproducirSiguiente() {
 
-        if (!canciones.isEmpty()) {
+        if (!cancionesMostradas.isEmpty()) {
 
             indiceActual++;
 
-            if (indiceActual >= canciones.size()) {
+            if (indiceActual >= cancionesMostradas.size()) {
                 indiceActual = 0;
             }
 
             listaCanciones.setSelectedIndex(indiceActual);
             actualizarInformacion();
 
-            Cancion actual = canciones.get(indiceActual);
+            Cancion actual = cancionesMostradas.get(indiceActual);
             reproductor.reproducir(actual.getRuta());
         }
     }
 
     private void reproducirAnterior() {
 
-        if (!canciones.isEmpty()) {
+        if (!cancionesMostradas.isEmpty()) {
 
             indiceActual--;
 
             if (indiceActual < 0) {
-                indiceActual = canciones.size() - 1;
+                indiceActual = cancionesMostradas.size() - 1;
             }
 
             listaCanciones.setSelectedIndex(indiceActual);
             actualizarInformacion();
 
-            Cancion actual = canciones.get(indiceActual);
+            Cancion actual = cancionesMostradas.get(indiceActual);
             reproductor.reproducir(actual.getRuta());
         }
     }
 
     private void actualizarInformacion() {
 
-        if (canciones.isEmpty()) {
+        if (cancionesMostradas.isEmpty()) {
             lblTitulo.setText("Sin canciones");
             lblArtista.setText("");
             lblAlbum.setText("");
             lblGenero.setText("");
             lblDuracion.setText("");
+            lblTiempoActual.setText("00:00");
+            lblTiempoTotal.setText("00:00");
+            sliderProgreso.setValue(0);
             panelPortada.cargarPortada(null);
             return;
         }
 
-        Cancion actual = canciones.get(indiceActual);
+        Cancion actual = cancionesMostradas.get(indiceActual);
 
         lblTitulo.setText(actual.getNombre());
         lblArtista.setText("Artista: " + actual.getArtista());

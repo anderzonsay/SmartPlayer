@@ -50,24 +50,32 @@ public class TablaHashGeneros {
 
     public void buscarPorGenero(String genero) {
 
-        int posicion = funcionHash(genero);
-
-        boolean encontrado = false;
+        ArrayList<Cancion> resultados = obtenerPorGenero(genero);
 
         System.out.println("Canciones del genero: " + genero);
+
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron canciones de ese genero");
+        } else {
+            for (Cancion c : resultados) {
+                System.out.println(c);
+            }
+        }
+    }
+
+    public ArrayList<Cancion> obtenerPorGenero(String genero) {
+
+        ArrayList<Cancion> resultados = new ArrayList<>();
+
+        int posicion = funcionHash(genero);
 
         for (Cancion c : tabla[posicion]) {
 
             if (c.getGenero().equalsIgnoreCase(genero)) {
-
-                System.out.println(c);
-                encontrado = true;
+                resultados.add(c);
             }
         }
 
-        if (!encontrado) {
-            System.out.println("No se encontraron canciones de ese genero");
-        }
+        return resultados;
     }
 }
-
