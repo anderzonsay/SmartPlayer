@@ -14,6 +14,7 @@ import reproductor.ReproductorMP3;
 import hash.TablaHashArtistas;
 import hash.TablaHashGeneros;
 import estadisticas.EstadisticasMusicales;
+import playlist.PlaylistFavoritos;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -23,6 +24,8 @@ public class VentanaPrincipal extends JFrame {
 
     private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
     private JButton btnBuscar, btnLimpiar;
+    private JButton btnFavorito, btnVerFavoritos, btnEliminarFavorito;
+    private JButton btnExportar, btnImportar;
     private JButton btnVerABB, btnVerAVL, btnEstadisticas;
 
     private JTextField txtBuscar;
@@ -39,6 +42,7 @@ public class VentanaPrincipal extends JFrame {
     private TablaHashGeneros hashGeneros;
 
     private ReproductorMP3 reproductor;
+    private PlaylistFavoritos favoritos;
     private PanelPortada panelPortada;
     private Timer timerProgreso;
     private boolean moviendoSlider = false;
@@ -52,6 +56,7 @@ public class VentanaPrincipal extends JFrame {
         this.hashArtistas = hashArtistas;
         this.hashGeneros = hashGeneros;
         this.reproductor = new ReproductorMP3();
+        this.favoritos = new PlaylistFavoritos();
 
         setTitle("SmartPlayer");
         setSize(1000, 700);
@@ -221,7 +226,7 @@ public class VentanaPrincipal extends JFrame {
         JPanel panelPrincipal = new JPanel();
         panelPrincipal.setBackground(new Color(18, 18, 18));
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
-        panelPrincipal.setMaximumSize(new Dimension(650, 90));
+        panelPrincipal.setMaximumSize(new Dimension(850, 150));
 
         JPanel panelReproduccion = new JPanel();
         panelReproduccion.setBackground(new Color(18, 18, 18));
@@ -238,18 +243,35 @@ public class VentanaPrincipal extends JFrame {
         panelReproduccion.add(btnStop);
         panelReproduccion.add(btnSiguiente);
 
+        JPanel panelPlaylist = new JPanel();
+        panelPlaylist.setBackground(new Color(18, 18, 18));
+
+        btnFavorito = new JButton("⭐ Favorito");
+        btnVerFavoritos = new JButton("❤️ Favoritos");
+        btnEliminarFavorito = new JButton("❌ Quitar Favorito");
+
+        panelPlaylist.add(btnFavorito);
+        panelPlaylist.add(btnVerFavoritos);
+        panelPlaylist.add(btnEliminarFavorito);
+
         JPanel panelOpciones = new JPanel();
         panelOpciones.setBackground(new Color(18, 18, 18));
+
+        btnExportar = new JButton("🔒 Exportar");
+        btnImportar = new JButton("🔓 Importar");
 
         btnVerABB = new JButton("🌳 ABB");
         btnVerAVL = new JButton("🌳 AVL");
         btnEstadisticas = new JButton("📊 Estadísticas");
 
+        panelOpciones.add(btnExportar);
+        panelOpciones.add(btnImportar);
         panelOpciones.add(btnVerABB);
         panelOpciones.add(btnVerAVL);
         panelOpciones.add(btnEstadisticas);
 
         panelPrincipal.add(panelReproduccion);
+        panelPrincipal.add(panelPlaylist);
         panelPrincipal.add(panelOpciones);
 
         return panelPrincipal;
@@ -293,10 +315,100 @@ public class VentanaPrincipal extends JFrame {
         btnSiguiente.addActionListener(e -> reproducirSiguiente());
         btnAnterior.addActionListener(e -> reproducirAnterior());
 
+        btnFavorito.addActionListener(e -> agregarFavoritoActual());
+        btnVerFavoritos.addActionListener(e -> mostrarFavoritos());
+        btnEliminarFavorito.addActionListener(e -> eliminarFavoritoActual());
+
+        btnExportar.addActionListener(e -> exportarFavoritosEncriptados());
+        btnImportar.addActionListener(e -> importarFavoritosEncriptados());
+
         btnVerABB.addActionListener(e -> abrirImagen("abb_real.png"));
         btnVerAVL.addActionListener(e -> abrirImagen("avl_real.png"));
 
         btnEstadisticas.addActionListener(e -> mostrarEstadisticas());
+    }
+
+    private void exportarFavoritosEncriptados() {
+
+        favoritos.exportarFavoritosEncriptados();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Favoritos exportados a:\nfavoritos_encriptados.txt"
+        );
+    }
+
+    private void importarFavoritosEncriptados() {
+
+        favoritos.importarFavoritosEncriptados();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Favoritos importados correctamente"
+        );
+    }
+
+    private void agregarFavoritoActual() {
+
+        if (cancionesMostradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay canción seleccionada");
+            return;
+        }
+
+        Cancion actual = cancionesMostradas.get(indiceActual);
+
+        favoritos.agregarFavorito(actual);
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Agregada a favoritos:\n" + actual.getNombre()
+        );
+    }
+
+    private void mostrarFavoritos() {
+
+        ArrayList<Cancion> listaFav = favoritos.obtenerFavoritos(canciones);
+
+        if (listaFav.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay favoritos guardados");
+            return;
+        }
+
+        cancionesMostradas = listaFav;
+        indiceActual = 0;
+
+        llenarModeloLista(cancionesMostradas);
+        actualizarInformacion();
+    }
+
+    private void eliminarFavoritoActual() {
+
+        if (cancionesMostradas.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No hay canción seleccionada"
+            );
+
+            return;
+        }
+
+        Cancion actual = cancionesMostradas.get(indiceActual);
+
+        favoritos.eliminarFavorito(actual);
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Favorito eliminado:\n" + actual.getNombre()
+        );
+
+        ArrayList<Cancion> listaFav = favoritos.obtenerFavoritos(canciones);
+
+        cancionesMostradas = listaFav;
+        indiceActual = 0;
+
+        llenarModeloLista(cancionesMostradas);
+        actualizarInformacion();
     }
 
     private void mostrarEstadisticas() {
@@ -583,5 +695,3 @@ public class VentanaPrincipal extends JFrame {
         }
     }
 }
-
-
