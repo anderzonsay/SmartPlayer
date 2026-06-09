@@ -25,7 +25,7 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
     private JButton btnBuscar, btnLimpiar;
     private JButton btnFavorito, btnVerFavoritos, btnEliminarFavorito;
-    private JButton btnExportar, btnImportar;
+    private JButton btnExportar, btnImportar, btnComprimir, btnDescomprimir;
     private JButton btnVerABB, btnVerAVL, btnEstadisticas;
 
     private JTextField txtBuscar;
@@ -226,7 +226,7 @@ public class VentanaPrincipal extends JFrame {
         JPanel panelPrincipal = new JPanel();
         panelPrincipal.setBackground(new Color(18, 18, 18));
         panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
-        panelPrincipal.setMaximumSize(new Dimension(850, 150));
+        panelPrincipal.setMaximumSize(new Dimension(900, 180));
 
         JPanel panelReproduccion = new JPanel();
         panelReproduccion.setBackground(new Color(18, 18, 18));
@@ -254,24 +254,33 @@ public class VentanaPrincipal extends JFrame {
         panelPlaylist.add(btnVerFavoritos);
         panelPlaylist.add(btnEliminarFavorito);
 
-        JPanel panelOpciones = new JPanel();
-        panelOpciones.setBackground(new Color(18, 18, 18));
+        JPanel panelSeguridad = new JPanel();
+        panelSeguridad.setBackground(new Color(18, 18, 18));
 
         btnExportar = new JButton("🔒 Exportar");
         btnImportar = new JButton("🔓 Importar");
+        btnComprimir = new JButton("📦 Comprimir");
+        btnDescomprimir = new JButton("📂 Descomprimir");
+
+        panelSeguridad.add(btnExportar);
+        panelSeguridad.add(btnImportar);
+        panelSeguridad.add(btnComprimir);
+        panelSeguridad.add(btnDescomprimir);
+
+        JPanel panelOpciones = new JPanel();
+        panelOpciones.setBackground(new Color(18, 18, 18));
 
         btnVerABB = new JButton("🌳 ABB");
         btnVerAVL = new JButton("🌳 AVL");
         btnEstadisticas = new JButton("📊 Estadísticas");
 
-        panelOpciones.add(btnExportar);
-        panelOpciones.add(btnImportar);
         panelOpciones.add(btnVerABB);
         panelOpciones.add(btnVerAVL);
         panelOpciones.add(btnEstadisticas);
 
         panelPrincipal.add(panelReproduccion);
         panelPrincipal.add(panelPlaylist);
+        panelPrincipal.add(panelSeguridad);
         panelPrincipal.add(panelOpciones);
 
         return panelPrincipal;
@@ -321,11 +330,33 @@ public class VentanaPrincipal extends JFrame {
 
         btnExportar.addActionListener(e -> exportarFavoritosEncriptados());
         btnImportar.addActionListener(e -> importarFavoritosEncriptados());
+        btnComprimir.addActionListener(e -> comprimirFavoritos());
+        btnDescomprimir.addActionListener(e -> descomprimirFavoritos());
 
         btnVerABB.addActionListener(e -> abrirImagen("abb_real.png"));
         btnVerAVL.addActionListener(e -> abrirImagen("avl_real.png"));
 
         btnEstadisticas.addActionListener(e -> mostrarEstadisticas());
+    }
+
+    private void comprimirFavoritos() {
+
+        favoritos.comprimirFavoritos();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Favoritos comprimidos en:\nfavoritos.comp"
+        );
+    }
+
+    private void descomprimirFavoritos() {
+
+        favoritos.descomprimirFavoritos();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Favoritos descomprimidos en:\nfavoritos_descomprimidos.txt"
+        );
     }
 
     private void exportarFavoritosEncriptados() {

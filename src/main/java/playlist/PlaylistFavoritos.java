@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.ArrayList;
 import modelos.Cancion;
 import encriptacion.Encriptador;
+import compresion.Compresor;
 
 public class PlaylistFavoritos {
 
@@ -172,6 +173,26 @@ public void importarFavoritosEncriptados() {
 
         System.out.println("Error al importar favoritos encriptados");
     }
+}
+
+public void comprimirFavoritos() {
+
+    Compresor compresor = new Compresor();
+
+    compresor.comprimirArchivo(
+            "favoritos.txt",
+            "favoritos.comp"
+    );
+}
+
+public void descomprimirFavoritos() {
+
+    Compresor compresor = new Compresor();
+
+    compresor.descomprimirArchivo(
+            "favoritos.comp",
+            "favoritos_descomprimidos.txt"
+    );
 }
     
 }
