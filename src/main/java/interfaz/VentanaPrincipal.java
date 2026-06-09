@@ -94,7 +94,9 @@ public class VentanaPrincipal extends JFrame {
         txtBuscar = new JTextField();
         txtBuscar.setMaximumSize(new Dimension(280, 30));
 
-        cmbTipoBusqueda = new JComboBox<>(new String[]{"Canción", "Artista", "Género"});
+        cmbTipoBusqueda = new JComboBox<>(
+        new String[]{"Canción", "Artista", "Álbum", "Género"}
+        );
         cmbTipoBusqueda.setMaximumSize(new Dimension(280, 30));
 
         btnBuscar = new JButton("Buscar");
@@ -442,37 +444,59 @@ public class VentanaPrincipal extends JFrame {
         actualizarInformacion();
     }
 
-    private void mostrarEstadisticas() {
+  private void mostrarEstadisticas() {
 
-        if (canciones.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
-            return;
-        }
-
-        EstadisticasMusicales estadisticas = new EstadisticasMusicales(canciones);
-
-        Cancion masLarga = estadisticas.cancionMasLarga();
-        Cancion masCorta = estadisticas.cancionMasCorta();
-
-        String mensaje =
-                "ESTADÍSTICAS SMARTPLAYER\n\n" +
-                "Canciones cargadas: " + estadisticas.totalCanciones() + "\n\n" +
-                "Canción más larga:\n" +
-                masLarga.getNombre() + " - " + masLarga.getDuracionFormateada() + "\n\n" +
-                "Canción más corta:\n" +
-                masCorta.getNombre() + " - " + masCorta.getDuracionFormateada() + "\n\n" +
-                "Duración promedio:\n" +
-                formatearTiempo(estadisticas.promedioDuracion() * 60) + "\n\n" +
-                "Artistas diferentes: " + estadisticas.totalArtistas() + "\n" +
-                "Géneros diferentes: " + estadisticas.totalGeneros();
-
-        JOptionPane.showMessageDialog(
-                this,
-                mensaje,
-                "Estadísticas",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+    if (canciones.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
+        return;
     }
+
+    EstadisticasMusicales estadisticas = new EstadisticasMusicales(canciones);
+
+    Cancion masLarga = estadisticas.cancionMasLarga();
+    Cancion masCorta = estadisticas.cancionMasCorta();
+
+    String mensaje =
+            "ESTADÍSTICAS SMARTPLAYER\n\n" +
+            "Canciones cargadas: " + estadisticas.totalCanciones() + "\n\n" +
+
+            "Canción más larga:\n" +
+            masLarga.getNombre() + " - " + masLarga.getDuracionFormateada() + "\n\n" +
+
+            "Canción más corta:\n" +
+            masCorta.getNombre() + " - " + masCorta.getDuracionFormateada() + "\n\n" +
+
+            "Duración promedio:\n" +
+            formatearTiempo(estadisticas.promedioDuracion() * 60) + "\n\n" +
+
+            "Duración total:\n" +
+            formatearTiempo(estadisticas.duracionTotal() * 60) + "\n\n" +
+
+            "Tamaño total:\n" +
+            String.format("%.2f MB", estadisticas.tamañoTotalMB()) + "\n\n" +
+
+            "Artistas diferentes: " + estadisticas.totalArtistas() + "\n" +
+            "Géneros diferentes: " + estadisticas.totalGeneros() + "\n\n" +
+
+            "Artista con más canciones:\n" +
+            estadisticas.artistaConMasCanciones() + "\n\n" +
+
+            "Género más frecuente:\n" +
+            estadisticas.generoMasFrecuente() + "\n\n" +
+
+            "Archivos duplicados:\n" +
+            estadisticas.cantidadDuplicados() + "\n\n" +
+
+            "Detalle duplicados:\n" +
+            estadisticas.listarDuplicados();
+
+    JOptionPane.showMessageDialog(
+            this,
+            mensaje,
+            "Estadísticas",
+            JOptionPane.INFORMATION_MESSAGE
+    );
+}
 
     private void abrirImagen(String nombreArchivo) {
 
@@ -519,12 +543,22 @@ public class VentanaPrincipal extends JFrame {
 
         } else if (tipo.equals("Artista")) {
 
-            resultados = hashArtistas.obtenerPorArtista(texto);
+    resultados = hashArtistas.obtenerPorArtista(texto);
 
-        } else if (tipo.equals("Género")) {
+} else if (tipo.equals("Álbum")) {
 
-            resultados = hashGeneros.obtenerPorGenero(texto);
+    for (Cancion c : canciones) {
+
+        if (c.getAlbum().toLowerCase().contains(texto.toLowerCase())) {
+
+            resultados.add(c);
         }
+    }
+
+} else if (tipo.equals("Género")) {
+
+    resultados = hashGeneros.obtenerPorGenero(texto);
+}
 
         cancionesMostradas = resultados;
         indiceActual = 0;

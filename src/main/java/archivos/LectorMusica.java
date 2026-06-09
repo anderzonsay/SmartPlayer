@@ -23,30 +23,8 @@ import org.jaudiotagger.tag.images.Artwork;
 public class LectorMusica {
 
     public void cargarCanciones(String rutaCarpeta, ListaSimple lista) {
-
         File carpeta = new File(rutaCarpeta);
-
-        if (!carpeta.exists() || !carpeta.isDirectory()) {
-            System.out.println("La ruta no existe o no es una carpeta valida");
-            return;
-        }
-
-        File[] archivos = carpeta.listFiles();
-
-        if (archivos == null) {
-            System.out.println("No se pudieron leer los archivos");
-            return;
-        }
-
-        for (File archivo : archivos) {
-
-            if (archivo.isFile() && archivo.getName().toLowerCase().endsWith(".mp3")) {
-
-                Cancion cancion = leerCancionDesdeArchivo(archivo);
-
-                lista.insertar(cancion);
-            }
-        }
+        cargarRecursivoLista(carpeta, lista);
     }
 
     public void cargarCancionesEstructuras(String rutaCarpeta,
@@ -62,34 +40,96 @@ public class LectorMusica {
 
         File carpeta = new File(rutaCarpeta);
 
-        if (!carpeta.exists() || !carpeta.isDirectory()) {
-            System.out.println("La ruta no existe o no es una carpeta valida");
+        cargarRecursivoEstructuras(
+                carpeta,
+                lista,
+                doble,
+                circular,
+                pila,
+                cola,
+                abb,
+                avl,
+                hashArtistas,
+                hashGeneros
+        );
+    }
+
+    private void cargarRecursivoLista(File archivo, ListaSimple lista) {
+
+        if (archivo == null || !archivo.exists()) {
             return;
         }
 
-        File[] archivos = carpeta.listFiles();
+        if (archivo.isDirectory()) {
 
-        if (archivos == null) {
-            System.out.println("No se pudieron leer los archivos");
-            return;
-        }
+            File[] archivos = archivo.listFiles();
 
-        for (File archivo : archivos) {
-
-            if (archivo.isFile() && archivo.getName().toLowerCase().endsWith(".mp3")) {
-
-                Cancion cancion = leerCancionDesdeArchivo(archivo);
-
-                lista.insertar(cancion);
-                doble.insertar(cancion);
-                circular.insertar(cancion);
-                pila.push(cancion);
-                cola.enqueue(cancion);
-                abb.insertar(cancion);
-                avl.insertar(cancion);
-                hashArtistas.insertar(cancion);
-                hashGeneros.insertar(cancion);
+            if (archivos == null) {
+                return;
             }
+
+            for (File f : archivos) {
+                cargarRecursivoLista(f, lista);
+            }
+
+        } else if (archivo.isFile() && archivo.getName().toLowerCase().endsWith(".mp3")) {
+
+            Cancion cancion = leerCancionDesdeArchivo(archivo);
+            lista.insertar(cancion);
+        }
+    }
+
+    private void cargarRecursivoEstructuras(File archivo,
+                                            ListaSimple lista,
+                                            ListaDoble doble,
+                                            ListaCircular circular,
+                                            Pila pila,
+                                            Cola cola,
+                                            ABB abb,
+                                            AVL avl,
+                                            TablaHashArtistas hashArtistas,
+                                            TablaHashGeneros hashGeneros) {
+
+        if (archivo == null || !archivo.exists()) {
+            return;
+        }
+
+        if (archivo.isDirectory()) {
+
+            File[] archivos = archivo.listFiles();
+
+            if (archivos == null) {
+                return;
+            }
+
+            for (File f : archivos) {
+                cargarRecursivoEstructuras(
+                        f,
+                        lista,
+                        doble,
+                        circular,
+                        pila,
+                        cola,
+                        abb,
+                        avl,
+                        hashArtistas,
+                        hashGeneros
+                );
+            }
+
+        } else if (archivo.isFile() && archivo.getName().toLowerCase().endsWith(".mp3")) {
+
+            Cancion cancion = leerCancionDesdeArchivo(archivo);
+
+            lista.insertar(cancion);
+            doble.insertar(cancion);
+            circular.insertar(cancion);
+            pila.push(cancion);
+            cola.enqueue(cancion);
+            abb.insertar(cancion);
+            avl.insertar(cancion);
+            hashArtistas.insertar(cancion);
+            hashGeneros.insertar(cancion);
         }
     }
 
@@ -146,9 +186,7 @@ public class LectorMusica {
             }
 
         } catch (Exception e) {
-
-            System.out.println("No se pudieron leer metadatos de: " + archivo.getName());
-            System.out.println("Se cargara usando nombre de archivo.");
+            // Se carga con datos básicos si el MP3 no permite leer metadatos.
         }
 
         double tamañoMB = archivo.length() / (1024.0 * 1024.0);
@@ -205,7 +243,6 @@ public class LectorMusica {
             return archivoPortada.getAbsolutePath();
 
         } catch (Exception e) {
-
             return null;
         }
     }
