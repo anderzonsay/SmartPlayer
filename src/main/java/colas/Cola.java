@@ -4,24 +4,24 @@ package colas;
 import modelos.Cancion;
 
 public class Cola {
-    
-       // FRENTE Y FINAL
+
     private NodoCola frente;
     private NodoCola fin;
 
-    // CONSTRUCTOR
     public Cola() {
 
         frente = null;
         fin = null;
     }
 
-    // ENCOLAR
     public void enqueue(Cancion cancion) {
+
+        if (cancion == null) {
+            return;
+        }
 
         NodoCola nuevo = new NodoCola(cancion);
 
-        // SI LA COLA ESTA VACIA
         if (frente == null) {
 
             frente = nuevo;
@@ -30,16 +30,13 @@ public class Cola {
         } else {
 
             fin.siguiente = nuevo;
-
             fin = nuevo;
         }
     }
 
-    // DESENCOLAR
     public Cancion dequeue() {
 
         if (frente == null) {
-
             return null;
         }
 
@@ -47,16 +44,42 @@ public class Cola {
 
         frente = frente.siguiente;
 
-        // SI LA COLA QUEDA VACIA
         if (frente == null) {
-
             fin = null;
         }
 
         return cancion;
     }
 
-    // MOSTRAR COLA
+    public boolean estaVacia() {
+        return frente == null;
+    }
+
+    public String obtenerColaTexto() {
+
+        if (frente == null) {
+            return "La cola está vacía.";
+        }
+
+        String texto = "";
+        NodoCola aux = frente;
+        int posicion = 1;
+
+        while (aux != null) {
+
+            texto += posicion + ". " +
+                    aux.cancion.getNombre() +
+                    " - " +
+                    aux.cancion.getArtista() +
+                    "\n";
+
+            aux = aux.siguiente;
+            posicion++;
+        }
+
+        return texto;
+    }
+
     public void mostrar() {
 
         NodoCola aux = frente;
@@ -69,5 +92,3 @@ public class Cola {
         }
     }
 }
-    
-

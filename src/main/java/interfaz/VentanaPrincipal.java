@@ -14,19 +14,23 @@ import reproductor.ReproductorMP3;
 import hash.TablaHashArtistas;
 import hash.TablaHashGeneros;
 import estadisticas.EstadisticasMusicales;
+import estadisticas.ComparadorEficiencia;
 import playlist.PlaylistFavoritos;
+import arboles.ABB;
+import arboles.AVL;
 
 public class VentanaPrincipal extends JFrame {
 
     private JLabel lblTitulo, lblArtista, lblAlbum, lblGenero, lblDuracion;
     private JLabel lblTiempoActual, lblTiempoTotal;
+    private JLabel lblComparacionABBAVL;
     private JSlider sliderProgreso;
 
     private JButton btnAnterior, btnPlay, btnPausa, btnStop, btnSiguiente;
     private JButton btnBuscar, btnLimpiar;
     private JButton btnFavorito, btnVerFavoritos, btnEliminarFavorito;
     private JButton btnExportar, btnImportar, btnComprimir, btnDescomprimir;
-    private JButton btnVerABB, btnVerAVL, btnEstadisticas;
+    private JButton btnVerABB, btnVerAVL, btnEstadisticas, btnEficiencia;
 
     private JTextField txtBuscar;
     private JComboBox<String> cmbTipoBusqueda;
@@ -46,6 +50,11 @@ public class VentanaPrincipal extends JFrame {
     private PanelPortada panelPortada;
     private Timer timerProgreso;
     private boolean moviendoSlider = false;
+
+    private String ultimaBusqueda = "";
+    private long ultimoTiempoBusquedaABB = 0;
+    private long ultimoTiempoBusquedaAVL = 0;
+    private int ultimosResultados = 0;
 
     public VentanaPrincipal(ArrayList<Cancion> canciones,
                             TablaHashArtistas hashArtistas,
@@ -95,9 +104,14 @@ public class VentanaPrincipal extends JFrame {
         txtBuscar.setMaximumSize(new Dimension(280, 30));
 
         cmbTipoBusqueda = new JComboBox<>(
-        new String[]{"Canción", "Artista", "Álbum", "Género"}
+                new String[]{"Canción", "Artista", "Álbum", "Género"}
         );
         cmbTipoBusqueda.setMaximumSize(new Dimension(280, 30));
+
+        lblComparacionABBAVL = new JLabel("ABB: 0 ns | AVL: 0 ns | Resultados: 0");
+        lblComparacionABBAVL.setForeground(new Color(30, 215, 96));
+        lblComparacionABBAVL.setFont(new Font("Consolas", Font.PLAIN, 12));
+        lblComparacionABBAVL.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         btnBuscar = new JButton("Buscar");
         btnLimpiar = new JButton("Limpiar");
@@ -111,6 +125,8 @@ public class VentanaPrincipal extends JFrame {
         panelBusqueda.add(txtBuscar);
         panelBusqueda.add(Box.createVerticalStrut(5));
         panelBusqueda.add(cmbTipoBusqueda);
+        panelBusqueda.add(Box.createVerticalStrut(5));
+        panelBusqueda.add(lblComparacionABBAVL);
         panelBusqueda.add(panelBotonesBusqueda);
 
         modeloLista = new DefaultListModel<>();
@@ -275,10 +291,12 @@ public class VentanaPrincipal extends JFrame {
         btnVerABB = new JButton("🌳 ABB");
         btnVerAVL = new JButton("🌳 AVL");
         btnEstadisticas = new JButton("📊 Estadísticas");
+        btnEficiencia = new JButton("⏱ Eficiencia");
 
         panelOpciones.add(btnVerABB);
         panelOpciones.add(btnVerAVL);
         panelOpciones.add(btnEstadisticas);
+        panelOpciones.add(btnEficiencia);
 
         panelPrincipal.add(panelReproduccion);
         panelPrincipal.add(panelPlaylist);
@@ -339,6 +357,115 @@ public class VentanaPrincipal extends JFrame {
         btnVerAVL.addActionListener(e -> abrirImagen("avl_real.png"));
 
         btnEstadisticas.addActionListener(e -> mostrarEstadisticas());
+        btnEficiencia.addActionListener(e -> mostrarEficiencia());
+    }
+
+    private void actualizarComparacionBusqueda(String texto) {
+
+        ABB abbPrueba = new ABB();
+        AVL avlPrueba = new AVL();
+
+        for (Cancion c : canciones) {
+            abbPrueba.insertar(c);
+            avlPrueba.insertar(c);
+        }
+
+        ComparadorEficiencia comparador = new ComparadorEficiencia();
+        comparador.medirBusqueda(abbPrueba, avlPrueba, texto);
+
+        ultimoTiempoBusquedaABB = comparador.getTiempoBusquedaABB();
+        ultimoTiempoBusquedaAVL = comparador.getTiempoBusquedaAVL();
+        ultimosResultados = cancionesMostradas.size();
+
+        lblComparacionABBAVL.setText(
+                "ABB: " + ultimoTiempoBusquedaABB +
+                " ns | AVL: " + ultimoTiempoBusquedaAVL +
+                " ns | Resultados: " + ultimosResultados
+        );
+    }
+
+    private void mostrarEficiencia() {
+
+        if (canciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
+            return;
+        }
+
+        String nombre = ultimaBusqueda;
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Primero realiza una búsqueda normal."
+            );
+
+            return;
+        }
+
+        ABB abbPrueba = new ABB();
+        AVL avlPrueba = new AVL();
+
+        long inicioCargaABB = System.nanoTime();
+
+        for (Cancion c : canciones) {
+            abbPrueba.insertar(c);
+        }
+
+        long finCargaABB = System.nanoTime();
+
+        long inicioCargaAVL = System.nanoTime();
+
+        for (Cancion c : canciones) {
+            avlPrueba.insertar(c);
+        }
+
+        long finCargaAVL = System.nanoTime();
+
+        String ganadorCarga;
+
+        if ((finCargaABB - inicioCargaABB) < (finCargaAVL - inicioCargaAVL)) {
+            ganadorCarga = "ABB fue más rápido cargando.";
+        } else if ((finCargaAVL - inicioCargaAVL) < (finCargaABB - inicioCargaABB)) {
+            ganadorCarga = "AVL fue más rápido cargando.";
+        } else {
+            ganadorCarga = "Ambos tuvieron el mismo tiempo de carga.";
+        }
+
+        String ganadorBusqueda;
+
+        if (ultimoTiempoBusquedaABB < ultimoTiempoBusquedaAVL) {
+            ganadorBusqueda = "ABB fue más rápido en búsqueda.";
+        } else if (ultimoTiempoBusquedaAVL < ultimoTiempoBusquedaABB) {
+            ganadorBusqueda = "AVL fue más rápido en búsqueda.";
+        } else {
+            ganadorBusqueda = "Ambos tuvieron el mismo tiempo de búsqueda.";
+        }
+
+        String mensaje =
+                "COMPARACIÓN ABB VS AVL\n\n" +
+
+                "Búsqueda realizada:\n" +
+                nombre + "\n\n" +
+
+                "Resultados encontrados: " + ultimosResultados + "\n\n" +
+
+                "TIEMPO DE CARGA\n" +
+                "ABB: " + (finCargaABB - inicioCargaABB) + " ns\n" +
+                "AVL: " + (finCargaAVL - inicioCargaAVL) + " ns\n" +
+                ganadorCarga + "\n\n" +
+
+                "TIEMPO DE BÚSQUEDA\n" +
+                "ABB: " + ultimoTiempoBusquedaABB + " ns\n" +
+                "AVL: " + ultimoTiempoBusquedaAVL + " ns\n" +
+                ganadorBusqueda;
+
+        JOptionPane.showMessageDialog(
+                this,
+                mensaje,
+                "Eficiencia ABB / AVL",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 
     private void comprimirFavoritos() {
@@ -444,59 +571,59 @@ public class VentanaPrincipal extends JFrame {
         actualizarInformacion();
     }
 
-  private void mostrarEstadisticas() {
+    private void mostrarEstadisticas() {
 
-    if (canciones.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
-        return;
+        if (canciones.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay canciones cargadas");
+            return;
+        }
+
+        EstadisticasMusicales estadisticas = new EstadisticasMusicales(canciones);
+
+        Cancion masLarga = estadisticas.cancionMasLarga();
+        Cancion masCorta = estadisticas.cancionMasCorta();
+
+        String mensaje =
+                "ESTADÍSTICAS SMARTPLAYER\n\n" +
+                "Canciones cargadas: " + estadisticas.totalCanciones() + "\n\n" +
+
+                "Canción más larga:\n" +
+                masLarga.getNombre() + " - " + masLarga.getDuracionFormateada() + "\n\n" +
+
+                "Canción más corta:\n" +
+                masCorta.getNombre() + " - " + masCorta.getDuracionFormateada() + "\n\n" +
+
+                "Duración promedio:\n" +
+                formatearTiempo(estadisticas.promedioDuracion() * 60) + "\n\n" +
+
+                "Duración total:\n" +
+                formatearTiempo(estadisticas.duracionTotal() * 60) + "\n\n" +
+
+                "Tamaño total:\n" +
+                String.format("%.2f MB", estadisticas.tamañoTotalMB()) + "\n\n" +
+
+                "Artistas diferentes: " + estadisticas.totalArtistas() + "\n" +
+                "Géneros diferentes: " + estadisticas.totalGeneros() + "\n\n" +
+
+                "Artista con más canciones:\n" +
+                estadisticas.artistaConMasCanciones() + "\n\n" +
+
+                "Género más frecuente:\n" +
+                estadisticas.generoMasFrecuente() + "\n\n" +
+
+                "Archivos duplicados:\n" +
+                estadisticas.cantidadDuplicados() + "\n\n" +
+
+                "Detalle duplicados:\n" +
+                estadisticas.listarDuplicados();
+
+        JOptionPane.showMessageDialog(
+                this,
+                mensaje,
+                "Estadísticas",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
-
-    EstadisticasMusicales estadisticas = new EstadisticasMusicales(canciones);
-
-    Cancion masLarga = estadisticas.cancionMasLarga();
-    Cancion masCorta = estadisticas.cancionMasCorta();
-
-    String mensaje =
-            "ESTADÍSTICAS SMARTPLAYER\n\n" +
-            "Canciones cargadas: " + estadisticas.totalCanciones() + "\n\n" +
-
-            "Canción más larga:\n" +
-            masLarga.getNombre() + " - " + masLarga.getDuracionFormateada() + "\n\n" +
-
-            "Canción más corta:\n" +
-            masCorta.getNombre() + " - " + masCorta.getDuracionFormateada() + "\n\n" +
-
-            "Duración promedio:\n" +
-            formatearTiempo(estadisticas.promedioDuracion() * 60) + "\n\n" +
-
-            "Duración total:\n" +
-            formatearTiempo(estadisticas.duracionTotal() * 60) + "\n\n" +
-
-            "Tamaño total:\n" +
-            String.format("%.2f MB", estadisticas.tamañoTotalMB()) + "\n\n" +
-
-            "Artistas diferentes: " + estadisticas.totalArtistas() + "\n" +
-            "Géneros diferentes: " + estadisticas.totalGeneros() + "\n\n" +
-
-            "Artista con más canciones:\n" +
-            estadisticas.artistaConMasCanciones() + "\n\n" +
-
-            "Género más frecuente:\n" +
-            estadisticas.generoMasFrecuente() + "\n\n" +
-
-            "Archivos duplicados:\n" +
-            estadisticas.cantidadDuplicados() + "\n\n" +
-
-            "Detalle duplicados:\n" +
-            estadisticas.listarDuplicados();
-
-    JOptionPane.showMessageDialog(
-            this,
-            mensaje,
-            "Estadísticas",
-            JOptionPane.INFORMATION_MESSAGE
-    );
-}
 
     private void abrirImagen(String nombreArchivo) {
 
@@ -526,6 +653,8 @@ public class VentanaPrincipal extends JFrame {
         String texto = txtBuscar.getText().trim();
         String tipo = cmbTipoBusqueda.getSelectedItem().toString();
 
+        ultimaBusqueda = texto;
+
         if (texto.isEmpty()) {
             limpiarBusqueda();
             return;
@@ -543,27 +672,29 @@ public class VentanaPrincipal extends JFrame {
 
         } else if (tipo.equals("Artista")) {
 
-    resultados = hashArtistas.obtenerPorArtista(texto);
+            resultados = hashArtistas.obtenerPorArtista(texto);
 
-} else if (tipo.equals("Álbum")) {
+        } else if (tipo.equals("Álbum")) {
 
-    for (Cancion c : canciones) {
+            for (Cancion c : canciones) {
 
-        if (c.getAlbum().toLowerCase().contains(texto.toLowerCase())) {
+                if (c.getAlbum().toLowerCase().contains(texto.toLowerCase())) {
 
-            resultados.add(c);
+                    resultados.add(c);
+                }
+            }
+
+        } else if (tipo.equals("Género")) {
+
+            resultados = hashGeneros.obtenerPorGenero(texto);
         }
-    }
-
-} else if (tipo.equals("Género")) {
-
-    resultados = hashGeneros.obtenerPorGenero(texto);
-}
 
         cancionesMostradas = resultados;
         indiceActual = 0;
 
         llenarModeloLista(cancionesMostradas);
+
+        actualizarComparacionBusqueda(texto);
 
         if (cancionesMostradas.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No se encontraron resultados");
@@ -575,9 +706,19 @@ public class VentanaPrincipal extends JFrame {
     private void limpiarBusqueda() {
 
         txtBuscar.setText("");
+        ultimaBusqueda = "";
         cancionesMostradas = new ArrayList<>(canciones);
         indiceActual = 0;
         llenarModeloLista(cancionesMostradas);
+
+        ultimoTiempoBusquedaABB = 0;
+        ultimoTiempoBusquedaAVL = 0;
+        ultimosResultados = 0;
+
+        if (lblComparacionABBAVL != null) {
+            lblComparacionABBAVL.setText("ABB: 0 ns | AVL: 0 ns | Resultados: 0");
+        }
+
         actualizarInformacion();
     }
 
