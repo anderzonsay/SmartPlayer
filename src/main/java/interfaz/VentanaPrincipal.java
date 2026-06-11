@@ -306,9 +306,9 @@ private int cantidadBusquedasAVL = 0;
         JPanel panelPlaylist = new JPanel();
         panelPlaylist.setBackground(new Color(18, 18, 18));
 
-        btnFavorito = new JButton("⭐ Favorito");
-        btnVerFavoritos = new JButton("❤️ Favoritos");
-        btnEliminarFavorito = new JButton("❌ Quitar");
+        btnFavorito = new JButton("❤");
+        btnVerFavoritos = new JButton("❤️ Ver Favoritos");
+        btnEliminarFavorito = new JButton("❌ Quitar Favorito");
         btnEliminarPlaylist = new JButton("🗑 Playlist");
         btnEliminarCancion = new JButton("🗑 Canción");
         btnModificarCancion = new JButton("✏ Modificar");
@@ -347,8 +347,8 @@ private int cantidadBusquedasAVL = 0;
         btnVerABB = new JButton("🌳 ABB");
         btnVerAVL = new JButton("🌳 AVL");
         btnRecorridos = new JButton("📄 Recorridos");
-        btnEstadisticas = new JButton("📊 Estadísticas");
-        btnEficiencia = new JButton("⏱ Eficiencia");
+        btnEstadisticas = new JButton("Estadísticas");
+        btnEficiencia = new JButton("⏱");
 
         panelOpciones.add(btnVerABB);
         panelOpciones.add(btnVerAVL);
