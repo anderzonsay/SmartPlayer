@@ -26,6 +26,12 @@ import listas.ListaCircular;
 
 public class VentanaPrincipal extends JFrame {
 
+    private final Color COLOR_FONDO = new Color(8, 10, 12);
+    private final Color COLOR_PANEL = new Color(14, 17, 20);
+    private final Color COLOR_PANEL_2 = new Color(22, 25, 28);
+    private final Color COLOR_CYAN = new Color(0, 229, 255);
+    private final Color COLOR_LINEA = new Color(55, 60, 65);
+
     private JLabel lblTitulo, lblArtista, lblAlbum, lblGenero, lblDuracion;
     private JLabel lblTiempoActual, lblTiempoTotal;
     private JLabel lblComparacionABBAVL;
@@ -73,12 +79,10 @@ public class VentanaPrincipal extends JFrame {
     private long ultimoTiempoBusquedaABB = 0;
     private long ultimoTiempoBusquedaAVL = 0;
     private long sumaBusquedaABB = 0;
-private long sumaBusquedaAVL = 0;
-private int cantidadBusquedasABB = 0;
-private int cantidadBusquedasAVL = 0;
+    private long sumaBusquedaAVL = 0;
+    private int cantidadBusquedasABB = 0;
+    private int cantidadBusquedasAVL = 0;
     private int ultimosResultados = 0;
-    
-    
 
     public VentanaPrincipal(ArrayList<Cancion> canciones,
                             TablaHashArtistas hashArtistas,
@@ -105,12 +109,12 @@ private int cantidadBusquedasAVL = 0;
         this.dobleReal = dobleReal;
         this.circularReal = circularReal;
 
-        setTitle("SmartPlayer");
-        setSize(1000, 700);
+        setTitle("Nexus Player");
+        setSize(1200, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(18, 18, 18));
+        getContentPane().setBackground(COLOR_FONDO);
 
         crearPanelIzquierdo();
         crearPanelCentral();
@@ -128,52 +132,84 @@ private int cantidadBusquedasAVL = 0;
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setPreferredSize(new Dimension(320, 0));
-        panel.setBackground(new Color(24, 24, 24));
+        panel.setBackground(COLOR_PANEL);
+        panel.setBorder(BorderFactory.createEmptyBorder(22, 18, 22, 18));
 
-        JLabel titulo = new JLabel("  Canciones");
-        titulo.setForeground(Color.WHITE);
-        titulo.setFont(new Font("Arial", Font.BOLD, 24));
+        JLabel titulo = new JLabel("Nexus Player");
+        titulo.setForeground(COLOR_CYAN);
+        titulo.setFont(new Font("Arial", Font.BOLD, 30));
+        titulo.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel subtitulo = new JLabel("Biblioteca Musical");
+        subtitulo.setForeground(Color.WHITE);
+        subtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
+        subtitulo.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel encabezado = new JPanel(new GridLayout(2, 1));
+        encabezado.setBackground(COLOR_PANEL);
+        encabezado.add(titulo);
+        encabezado.add(subtitulo);
 
         JPanel panelBusqueda = new JPanel();
-        panelBusqueda.setBackground(new Color(24, 24, 24));
+        panelBusqueda.setBackground(COLOR_PANEL);
         panelBusqueda.setLayout(new BoxLayout(panelBusqueda, BoxLayout.Y_AXIS));
 
         txtBuscar = new JTextField();
-        txtBuscar.setMaximumSize(new Dimension(280, 30));
+        txtBuscar.setText("");
+        txtBuscar.setToolTipText("Buscar...");
+        txtBuscar.setMaximumSize(new Dimension(290, 36));
+        txtBuscar.setFont(new Font("Arial", Font.PLAIN, 15));
+        txtBuscar.setBackground(new Color(20, 23, 26));
+        txtBuscar.setForeground(Color.WHITE);
+        txtBuscar.setCaretColor(Color.WHITE);
 
         cmbTipoBusqueda = new JComboBox<>(
                 new String[]{"Canción", "Artista", "Álbum", "Género"}
         );
-        cmbTipoBusqueda.setMaximumSize(new Dimension(280, 30));
+        cmbTipoBusqueda.setMaximumSize(new Dimension(290, 36));
+        cmbTipoBusqueda.setFont(new Font("Arial", Font.BOLD, 14));
 
-        lblComparacionABBAVL = new JLabel("ABB: 0 ns | AVL: 0 ns | Resultados: 0");
-        lblComparacionABBAVL.setForeground(new Color(30, 215, 96));
-        lblComparacionABBAVL.setFont(new Font("Consolas", Font.PLAIN, 12));
+        lblComparacionABBAVL = new JLabel("ABB: 0 ns  |  AVL: 0 ns  |  Resultado: 0");
+        lblComparacionABBAVL.setForeground(COLOR_CYAN);
+        lblComparacionABBAVL.setFont(new Font("Consolas", Font.BOLD, 12));
         lblComparacionABBAVL.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblComparacionABBAVL.setHorizontalAlignment(SwingConstants.CENTER);
 
-        btnBuscar = new JButton("Buscar");
-        btnLimpiar = new JButton("Limpiar");
+        btnBuscar = crearBotonPequeno("Buscar");
+        btnLimpiar = crearBotonPequeno("Limpiar");
 
-        JPanel panelBotonesBusqueda = new JPanel();
-        panelBotonesBusqueda.setBackground(new Color(24, 24, 24));
+        JPanel panelBotonesBusqueda = new JPanel(new GridLayout(1, 2, 10, 0));
+        panelBotonesBusqueda.setBackground(COLOR_PANEL);
+        panelBotonesBusqueda.setMaximumSize(new Dimension(290, 36));
         panelBotonesBusqueda.add(btnBuscar);
         panelBotonesBusqueda.add(btnLimpiar);
 
-        panelBusqueda.add(Box.createVerticalStrut(8));
+        JSeparator separador = new JSeparator();
+        separador.setForeground(COLOR_LINEA);
+        separador.setMaximumSize(new Dimension(290, 10));
+
+        panelBusqueda.add(Box.createVerticalStrut(22));
         panelBusqueda.add(txtBuscar);
-        panelBusqueda.add(Box.createVerticalStrut(5));
+        panelBusqueda.add(Box.createVerticalStrut(10));
         panelBusqueda.add(cmbTipoBusqueda);
-        panelBusqueda.add(Box.createVerticalStrut(5));
+        panelBusqueda.add(Box.createVerticalStrut(12));
         panelBusqueda.add(lblComparacionABBAVL);
+        panelBusqueda.add(Box.createVerticalStrut(12));
         panelBusqueda.add(panelBotonesBusqueda);
+        panelBusqueda.add(Box.createVerticalStrut(18));
+        panelBusqueda.add(separador);
+        panelBusqueda.add(Box.createVerticalStrut(18));
 
         modeloLista = new DefaultListModel<>();
         llenarModeloLista(cancionesMostradas);
 
         listaCanciones = new JList<>(modeloLista);
-        listaCanciones.setBackground(new Color(30, 30, 30));
+        listaCanciones.setBackground(new Color(10, 13, 15));
         listaCanciones.setForeground(Color.WHITE);
-        listaCanciones.setFont(new Font("Arial", Font.PLAIN, 20));
+        listaCanciones.setSelectionBackground(new Color(0, 110, 130));
+        listaCanciones.setSelectionForeground(Color.WHITE);
+        listaCanciones.setFont(new Font("Arial", Font.PLAIN, 18));
+        listaCanciones.setFixedCellHeight(30);
 
         listaCanciones.addListSelectionListener(e -> {
 
@@ -188,70 +224,243 @@ private int cantidadBusquedasAVL = 0;
             }
         });
 
-        JPanel panelSuperior = new JPanel(new BorderLayout());
-        panelSuperior.setBackground(new Color(24, 24, 24));
-        panelSuperior.add(titulo, BorderLayout.NORTH);
-        panelSuperior.add(panelBusqueda, BorderLayout.CENTER);
+        JScrollPane scrollLista = new JScrollPane(listaCanciones);
+        scrollLista.setBorder(BorderFactory.createLineBorder(COLOR_LINEA));
+        scrollLista.getViewport().setBackground(new Color(10, 13, 15));
 
-        panel.add(panelSuperior, BorderLayout.NORTH);
-        panel.add(new JScrollPane(listaCanciones), BorderLayout.CENTER);
+        JPanel superior = new JPanel();
+        superior.setLayout(new BoxLayout(superior, BoxLayout.Y_AXIS));
+        superior.setBackground(COLOR_PANEL);
+        superior.add(encabezado);
+        superior.add(panelBusqueda);
+
+        panel.add(superior, BorderLayout.NORTH);
+        panel.add(scrollLista, BorderLayout.CENTER);
 
         add(panel, BorderLayout.WEST);
     }
 
     private void crearPanelCentral() {
 
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(18, 18, 18));
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JPanel contenedor = new JPanel(new BorderLayout());
+        contenedor.setBackground(COLOR_FONDO);
+
+        JPanel panelReproductor = new JPanel();
+        panelReproductor.setBackground(COLOR_FONDO);
+        panelReproductor.setLayout(new BoxLayout(panelReproductor, BoxLayout.Y_AXIS));
+        panelReproductor.setBorder(BorderFactory.createEmptyBorder(35, 30, 20, 30));
 
         panelPortada = new PanelPortada();
         panelPortada.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        lblTitulo = crearLabel("", 30, true);
+        lblTitulo = crearLabel("", 34, true);
         lblArtista = crearLabel("", 20, false);
-        lblAlbum = crearLabel("", 20, false);
-        lblGenero = crearLabel("", 20, false);
-        lblDuracion = crearLabel("", 20, false);
+        lblAlbum = crearLabel("", 19, false);
+        lblGenero = crearLabel("", 19, false);
+        lblDuracion = crearLabel("", 19, false);
 
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(panelPortada);
-        panel.add(Box.createVerticalStrut(15));
-        panel.add(lblTitulo);
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(lblArtista);
-        panel.add(lblAlbum);
-        panel.add(lblGenero);
-        panel.add(lblDuracion);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(crearPanelProgreso());
-        panel.add(Box.createVerticalStrut(10));
-        panel.add(crearPanelBotones());
+        panelReproductor.add(Box.createVerticalStrut(5));
+        panelReproductor.add(panelPortada);
+        panelReproductor.add(Box.createVerticalStrut(28));
+        panelReproductor.add(lblTitulo);
+        panelReproductor.add(Box.createVerticalStrut(12));
+        panelReproductor.add(lblArtista);
+        panelReproductor.add(lblAlbum);
+        panelReproductor.add(lblGenero);
+        panelReproductor.add(lblDuracion);
+        panelReproductor.add(Box.createVerticalStrut(28));
+        panelReproductor.add(crearPanelProgreso());
 
-        add(panel, BorderLayout.CENTER);
+      
+panelReproductor.add(Box.createVerticalStrut(25));
+panelReproductor.add(crearPanelControlesInferior());
+
+        contenedor.add(panelReproductor, BorderLayout.CENTER);
+        contenedor.add(crearPanelHerramientasDerecha(), BorderLayout.EAST);
+
+        add(contenedor, BorderLayout.CENTER);
+    }
+
+    private JPanel crearPanelHerramientasDerecha() {
+
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(270, 0));
+        panel.setBackground(COLOR_PANEL);
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 14, 18, 14));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        btnFavorito = crearBotonMenu("♡  Agregar Favorito");
+        btnVerFavoritos = crearBotonMenu("☰  Ver Favoritos");
+        btnEliminarFavorito = crearBotonMenu("X  Quitar Favorito");
+
+        btnHistorial = crearBotonMenu("◷  Historial");
+        btnAgregarCola = crearBotonMenu("+  Agregar a Cola");
+        btnVerCola = crearBotonMenu("≡  Ver Cola");
+        btnReproducirCola = crearBotonMenu("▶  Reproducir Cola");
+
+        btnModificarCancion = crearBotonMenu("✎  Modificar Canción");
+        btnEliminarCancion = crearBotonMenu("⌫  Eliminar Canción");
+        btnEliminarPlaylist = crearBotonMenu("⌫  Eliminar Playlist");
+
+        btnVerABB = crearBotonMenu("🌳  Ver ABB");
+        btnVerAVL = crearBotonMenu("🌳  Ver AVL");
+        btnRecorridos = crearBotonMenu("📄  Recorridos");
+        btnEstadisticas = crearBotonMenu("▥  Estadísticas");
+        btnEficiencia = crearBotonMenu("⏱  Eficiencia");
+
+        btnExportar = crearBotonMenu("🔒  Exportar");
+        btnImportar = crearBotonMenu("🔓  Importar");
+        btnComprimir = crearBotonMenu("📦  Comprimir");
+        btnDescomprimir = crearBotonMenu("📂  Descomprimir");
+
+        panel.add(crearTituloSeccion("PLAYLIST"));
+        panel.add(btnFavorito);
+        panel.add(btnVerFavoritos);
+        panel.add(btnEliminarFavorito);
+        panel.add(crearSeparadorDerecha());
+
+        panel.add(crearTituloSeccion("REPRODUCCIÓN"));
+        panel.add(btnHistorial);
+        panel.add(btnAgregarCola);
+        panel.add(btnVerCola);
+        panel.add(btnReproducirCola);
+        panel.add(crearSeparadorDerecha());
+
+        panel.add(crearTituloSeccion("GESTIÓN"));
+        panel.add(btnModificarCancion);
+        panel.add(btnEliminarCancion);
+        panel.add(btnEliminarPlaylist);
+        panel.add(crearSeparadorDerecha());
+
+        panel.add(crearTituloSeccion("ESTRUCTURAS"));
+        panel.add(btnVerABB);
+        panel.add(btnVerAVL);
+        panel.add(btnRecorridos);
+        panel.add(btnEstadisticas);
+        panel.add(btnEficiencia);
+        panel.add(crearSeparadorDerecha());
+
+        panel.add(crearTituloSeccion("ARCHIVOS"));
+        panel.add(btnExportar);
+        panel.add(btnImportar);
+        panel.add(btnComprimir);
+        panel.add(btnDescomprimir);
+
+        return panel;
+    }
+
+    private JPanel crearPanelControlesInferior() {
+
+        JPanel panel = new JPanel();
+        panel.setBackground(COLOR_FONDO);
+        panel.setMaximumSize(new Dimension(720, 80));
+
+        btnAleatorio = crearBotonControl("🔀");
+        btnAnterior = crearBotonControl("⏮");
+        btnPlay = crearBotonControl("▶");
+        btnPausa = crearBotonControl("⏸");
+        btnStop = crearBotonControl("■");
+        btnSiguiente = crearBotonControl("⏭");
+        btnCircular = crearBotonControl("🔁");
+
+        panel.add(btnAleatorio);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnAnterior);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnPlay);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnPausa);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnStop);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnSiguiente);
+        panel.add(Box.createHorizontalStrut(10));
+        panel.add(btnCircular);
+
+        return panel;
+    }
+
+    private JButton crearBotonControl(String texto) {
+
+        JButton boton = new JButton(texto);
+        boton.setPreferredSize(new Dimension(70, 55));
+        boton.setFocusPainted(false);
+        boton.setBackground(COLOR_PANEL_2);
+        boton.setForeground(COLOR_CYAN);
+        boton.setFont(new Font("Segoe UI Symbol", Font.BOLD, 24));
+        boton.setBorder(BorderFactory.createLineBorder(COLOR_LINEA));
+
+        return boton;
+    }
+
+    private JButton crearBotonPequeno(String texto) {
+
+        JButton boton = new JButton(texto);
+        boton.setFocusPainted(false);
+        boton.setBackground(new Color(0, 120, 140));
+        boton.setForeground(Color.WHITE);
+        boton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        return boton;
+    }
+
+    private JSeparator crearSeparadorDerecha() {
+
+        JSeparator separador = new JSeparator();
+        separador.setForeground(COLOR_LINEA);
+        separador.setMaximumSize(new Dimension(240, 14));
+
+        return separador;
+    }
+
+    private JLabel crearTituloSeccion(String texto) {
+
+        JLabel label = new JLabel(texto);
+        label.setForeground(COLOR_CYAN);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setBorder(BorderFactory.createEmptyBorder(8, 0, 7, 0));
+
+        return label;
+    }
+
+    private JButton crearBotonMenu(String texto) {
+
+        JButton boton = new JButton(texto);
+        boton.setMaximumSize(new Dimension(245, 30));
+        boton.setPreferredSize(new Dimension(245, 30));
+        boton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        boton.setFocusPainted(false);
+        boton.setBackground(COLOR_PANEL_2);
+        boton.setForeground(Color.WHITE);
+        boton.setFont(new Font("Segoe UI Symbol", Font.PLAIN, 14));
+        boton.setHorizontalAlignment(SwingConstants.LEFT);
+        boton.setBorder(BorderFactory.createLineBorder(new Color(40, 45, 50)));
+
+        return boton;
     }
 
     private JPanel crearPanelProgreso() {
 
-        JPanel panel = new JPanel(new BorderLayout(10, 0));
-        panel.setBackground(new Color(18, 18, 18));
-        panel.setMaximumSize(new Dimension(520, 30));
+        JPanel panel = new JPanel(new BorderLayout(15, 0));
+        panel.setBackground(COLOR_FONDO);
+        panel.setMaximumSize(new Dimension(650, 35));
 
         lblTiempoActual = new JLabel("00:00");
         lblTiempoActual.setForeground(Color.WHITE);
-        lblTiempoActual.setFont(new Font("Consolas", Font.BOLD, 14));
+        lblTiempoActual.setFont(new Font("Consolas", Font.BOLD, 16));
 
         lblTiempoTotal = new JLabel("00:00");
         lblTiempoTotal.setForeground(Color.WHITE);
-        lblTiempoTotal.setFont(new Font("Consolas", Font.BOLD, 14));
+        lblTiempoTotal.setFont(new Font("Consolas", Font.BOLD, 16));
 
         sliderProgreso = new JSlider(0, 100, 0);
-        sliderProgreso.setBackground(new Color(18, 18, 18));
-        sliderProgreso.setForeground(new Color(30, 215, 96));
+        sliderProgreso.setBackground(COLOR_FONDO);
+        sliderProgreso.setForeground(COLOR_CYAN);
         sliderProgreso.setPaintTicks(false);
         sliderProgreso.setPaintLabels(false);
         sliderProgreso.setFocusable(false);
-        sliderProgreso.setPreferredSize(new Dimension(390, 18));
+        sliderProgreso.setPreferredSize(new Dimension(460, 18));
 
         sliderProgreso.addChangeListener((ChangeEvent e) -> {
 
@@ -275,93 +484,6 @@ private int cantidadBusquedasAVL = 0;
         panel.add(lblTiempoTotal, BorderLayout.EAST);
 
         return panel;
-    }
-
-    private JPanel crearPanelBotones() {
-
-        JPanel panelPrincipal = new JPanel();
-        panelPrincipal.setBackground(new Color(18, 18, 18));
-        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
-        panelPrincipal.setMaximumSize(new Dimension(1000, 260));
-
-        JPanel panelReproduccion = new JPanel();
-        panelReproduccion.setBackground(new Color(18, 18, 18));
-
-        btnAnterior = new JButton("⏮");
-        btnPlay = new JButton("▶");
-        btnPausa = new JButton("⏸");
-        btnStop = new JButton("⏹");
-        btnSiguiente = new JButton("⏭");
-        btnAleatorio = new JButton("🔀 Aleatorio OFF");
-        btnCircular = new JButton("🔁 Circular OFF");
-
-        panelReproduccion.add(btnAnterior);
-        panelReproduccion.add(btnPlay);
-        panelReproduccion.add(btnPausa);
-        panelReproduccion.add(btnStop);
-        panelReproduccion.add(btnSiguiente);
-        panelReproduccion.add(btnAleatorio);
-        panelReproduccion.add(btnCircular);
-
-        JPanel panelPlaylist = new JPanel();
-        panelPlaylist.setBackground(new Color(18, 18, 18));
-
-        btnFavorito = new JButton("❤");
-        btnVerFavoritos = new JButton("❤️ Ver Favoritos");
-        btnEliminarFavorito = new JButton("❌ Quitar Favorito");
-        btnEliminarPlaylist = new JButton("🗑 Playlist");
-        btnEliminarCancion = new JButton("🗑 Canción");
-        btnModificarCancion = new JButton("✏ Modificar");
-        btnHistorial = new JButton("📜 Historial");
-        btnAgregarCola = new JButton("➕ Cola");
-        btnVerCola = new JButton("📋 Ver Cola");
-        btnReproducirCola = new JButton("▶ Cola");
-
-        panelPlaylist.add(btnFavorito);
-        panelPlaylist.add(btnVerFavoritos);
-        panelPlaylist.add(btnEliminarFavorito);
-        panelPlaylist.add(btnEliminarPlaylist);
-        panelPlaylist.add(btnEliminarCancion);
-        panelPlaylist.add(btnModificarCancion);
-        panelPlaylist.add(btnHistorial);
-        panelPlaylist.add(btnAgregarCola);
-        panelPlaylist.add(btnVerCola);
-        panelPlaylist.add(btnReproducirCola);
-
-        JPanel panelSeguridad = new JPanel();
-        panelSeguridad.setBackground(new Color(18, 18, 18));
-
-        btnExportar = new JButton("🔒 Exportar");
-        btnImportar = new JButton("🔓 Importar");
-        btnComprimir = new JButton("📦 Comprimir");
-        btnDescomprimir = new JButton("📂 Descomprimir");
-
-        panelSeguridad.add(btnExportar);
-        panelSeguridad.add(btnImportar);
-        panelSeguridad.add(btnComprimir);
-        panelSeguridad.add(btnDescomprimir);
-
-        JPanel panelOpciones = new JPanel();
-        panelOpciones.setBackground(new Color(18, 18, 18));
-
-        btnVerABB = new JButton("🌳 ABB");
-        btnVerAVL = new JButton("🌳 AVL");
-        btnRecorridos = new JButton("📄 Recorridos");
-        btnEstadisticas = new JButton("Estadísticas");
-        btnEficiencia = new JButton("⏱");
-
-        panelOpciones.add(btnVerABB);
-        panelOpciones.add(btnVerAVL);
-        panelOpciones.add(btnRecorridos);
-        panelOpciones.add(btnEstadisticas);
-        panelOpciones.add(btnEficiencia);
-
-        panelPrincipal.add(panelReproduccion);
-        panelPrincipal.add(panelPlaylist);
-        panelPrincipal.add(panelSeguridad);
-        panelPrincipal.add(panelOpciones);
-
-        return panelPrincipal;
     }
 
     private JLabel crearLabel(String texto, int tamaño, boolean negrita) {
@@ -436,7 +558,7 @@ private int cantidadBusquedasAVL = 0;
 
         if (modoAleatorio) {
 
-            btnAleatorio.setText("🔀 Aleatorio ON");
+            btnAleatorio.setText("🔀");
 
             JOptionPane.showMessageDialog(
                     this,
@@ -445,7 +567,7 @@ private int cantidadBusquedasAVL = 0;
 
         } else {
 
-            btnAleatorio.setText("🔀 Aleatorio OFF");
+            btnAleatorio.setText("🔀");
 
             JOptionPane.showMessageDialog(
                     this,
@@ -453,13 +575,13 @@ private int cantidadBusquedasAVL = 0;
             );
         }
     }
-    
+
     private void activarDesactivarCircular() {
 
         modoCircular = !modoCircular;
 
         if (modoCircular) {
-            btnCircular.setText("🔁 Circular ON");
+            btnCircular.setText("🔁");
 
             JOptionPane.showMessageDialog(
                     this,
@@ -467,7 +589,7 @@ private int cantidadBusquedasAVL = 0;
             );
 
         } else {
-            btnCircular.setText("🔁 Circular OFF");
+            btnCircular.setText("🔁");
 
             JOptionPane.showMessageDialog(
                     this,
@@ -574,98 +696,97 @@ private int cantidadBusquedasAVL = 0;
                 "Canción eliminada de todas las estructuras:\n" + nombre
         );
     }
-    
+
     private void modificarCancionActual() {
 
-    if (cancionesMostradas.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No hay canción seleccionada");
-        return;
-    }
+        if (cancionesMostradas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay canción seleccionada");
+            return;
+        }
 
-    Cancion actual = cancionesMostradas.get(indiceActual);
+        Cancion actual = cancionesMostradas.get(indiceActual);
 
-    JTextField txtArtista = new JTextField(actual.getArtista());
-    JTextField txtAlbum = new JTextField(actual.getAlbum());
-    JTextField txtGenero = new JTextField(actual.getGenero());
-    JTextField txtDuracion = new JTextField(String.valueOf(actual.getDuracion()));
-    JTextField txtAño = new JTextField(String.valueOf(actual.getAño()));
+        JTextField txtArtista = new JTextField(actual.getArtista());
+        JTextField txtAlbum = new JTextField(actual.getAlbum());
+        JTextField txtGenero = new JTextField(actual.getGenero());
+        JTextField txtDuracion = new JTextField(String.valueOf(actual.getDuracion()));
+        JTextField txtAño = new JTextField(String.valueOf(actual.getAño()));
 
-    JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
+        JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
 
-    panel.add(new JLabel("Artista:"));
-    panel.add(txtArtista);
+        panel.add(new JLabel("Artista:"));
+        panel.add(txtArtista);
 
-    panel.add(new JLabel("Álbum:"));
-    panel.add(txtAlbum);
+        panel.add(new JLabel("Álbum:"));
+        panel.add(txtAlbum);
 
-    panel.add(new JLabel("Género:"));
-    panel.add(txtGenero);
+        panel.add(new JLabel("Género:"));
+        panel.add(txtGenero);
 
-    panel.add(new JLabel("Duración (minutos):"));
-    panel.add(txtDuracion);
+        panel.add(new JLabel("Duración (minutos):"));
+        panel.add(txtDuracion);
 
-    panel.add(new JLabel("Año:"));
-    panel.add(txtAño);
+        panel.add(new JLabel("Año:"));
+        panel.add(txtAño);
 
-    int opcion = JOptionPane.showConfirmDialog(
-            this,
-            panel,
-            "Modificar canción: " + actual.getNombre(),
-            JOptionPane.OK_CANCEL_OPTION
-    );
-
-    if (opcion != JOptionPane.OK_OPTION) {
-        return;
-    }
-
-    try {
-
-        String nuevoArtista = txtArtista.getText().trim();
-        String nuevoAlbum = txtAlbum.getText().trim();
-        String nuevoGenero = txtGenero.getText().trim();
-        double nuevaDuracion = Double.parseDouble(txtDuracion.getText().trim());
-        int nuevoAño = Integer.parseInt(txtAño.getText().trim());
-
-        actual.setArtista(nuevoArtista);
-        actual.setAlbum(nuevoAlbum);
-        actual.setGenero(nuevoGenero);
-        actual.setDuracion(nuevaDuracion);
-        actual.setAño(nuevoAño);
-
-        abbReal.modificar(
-                actual.getNombre(),
-                nuevoArtista,
-                nuevoAlbum,
-                nuevoGenero,
-                nuevaDuracion,
-                nuevoAño
-        );
-
-        avlReal.modificar(
-                actual.getNombre(),
-                nuevoArtista,
-                nuevoAlbum,
-                nuevoGenero,
-                nuevaDuracion,
-                nuevoAño
-        );
-
-        actualizarInformacion();
-
-        JOptionPane.showMessageDialog(
+        int opcion = JOptionPane.showConfirmDialog(
                 this,
-                "Canción modificada correctamente"
+                panel,
+                "Modificar canción: " + actual.getNombre(),
+                JOptionPane.OK_CANCEL_OPTION
         );
 
-    } catch (NumberFormatException e) {
+        if (opcion != JOptionPane.OK_OPTION) {
+            return;
+        }
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Error: duración y año deben ser números válidos"
-        );
+        try {
+
+            String nuevoArtista = txtArtista.getText().trim();
+            String nuevoAlbum = txtAlbum.getText().trim();
+            String nuevoGenero = txtGenero.getText().trim();
+            double nuevaDuracion = Double.parseDouble(txtDuracion.getText().trim());
+            int nuevoAño = Integer.parseInt(txtAño.getText().trim());
+
+            actual.setArtista(nuevoArtista);
+            actual.setAlbum(nuevoAlbum);
+            actual.setGenero(nuevoGenero);
+            actual.setDuracion(nuevaDuracion);
+            actual.setAño(nuevoAño);
+
+            abbReal.modificar(
+                    actual.getNombre(),
+                    nuevoArtista,
+                    nuevoAlbum,
+                    nuevoGenero,
+                    nuevaDuracion,
+                    nuevoAño
+            );
+
+            avlReal.modificar(
+                    actual.getNombre(),
+                    nuevoArtista,
+                    nuevoAlbum,
+                    nuevoGenero,
+                    nuevaDuracion,
+                    nuevoAño
+            );
+
+            actualizarInformacion();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Canción modificada correctamente"
+            );
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error: duración y año deben ser números válidos"
+            );
+        }
     }
-}
-    
 
     private void mostrarHistorial() {
 
@@ -753,11 +874,13 @@ private int cantidadBusquedasAVL = 0;
 
         ultimoTiempoBusquedaABB = finABB - inicioABB;
         ultimoTiempoBusquedaAVL = finAVL - inicioAVL;
-        sumaBusquedaABB += ultimoTiempoBusquedaABB;
-sumaBusquedaAVL += ultimoTiempoBusquedaAVL;
 
-cantidadBusquedasABB++;
-cantidadBusquedasAVL++;
+        sumaBusquedaABB += ultimoTiempoBusquedaABB;
+        sumaBusquedaAVL += ultimoTiempoBusquedaAVL;
+
+        cantidadBusquedasABB++;
+        cantidadBusquedasAVL++;
+
         ultimosResultados = cancionesMostradas.size();
 
         lblComparacionABBAVL.setText(
@@ -824,21 +947,21 @@ cantidadBusquedasAVL++;
         } else {
             ganadorBusqueda = "Ambos tuvieron el mismo tiempo de búsqueda.";
         }
-        
+
         double promedioABB = 0;
-double promedioAVL = 0;
+        double promedioAVL = 0;
 
-if (cantidadBusquedasABB > 0) {
-    promedioABB =
-            (double) sumaBusquedaABB /
-            cantidadBusquedasABB;
-}
+        if (cantidadBusquedasABB > 0) {
+            promedioABB =
+                    (double) sumaBusquedaABB /
+                    cantidadBusquedasABB;
+        }
 
-if (cantidadBusquedasAVL > 0) {
-    promedioAVL =
-            (double) sumaBusquedaAVL /
-            cantidadBusquedasAVL;
-}
+        if (cantidadBusquedasAVL > 0) {
+            promedioAVL =
+                    (double) sumaBusquedaAVL /
+                    cantidadBusquedasAVL;
+        }
 
         String mensaje =
                 "COMPARACIÓN ABB VS AVL\n\n" +
@@ -854,14 +977,14 @@ if (cantidadBusquedasAVL > 0) {
                 ganadorCarga + "\n\n" +
 
                 "TIEMPO DE BÚSQUEDA PARCIAL\n" +
-"ABB: " + ultimoTiempoBusquedaABB + " ns\n" +
-"AVL: " + ultimoTiempoBusquedaAVL + " ns\n\n" +
+                "ABB: " + ultimoTiempoBusquedaABB + " ns\n" +
+                "AVL: " + ultimoTiempoBusquedaAVL + " ns\n\n" +
 
-"PROMEDIO DE BÚSQUEDA\n" +
-"ABB: " + String.format("%.2f", promedioABB) + " ns\n" +
-"AVL: " + String.format("%.2f", promedioAVL) + " ns\n\n" +
+                "PROMEDIO DE BÚSQUEDA\n" +
+                "ABB: " + String.format("%.2f", promedioABB) + " ns\n" +
+                "AVL: " + String.format("%.2f", promedioAVL) + " ns\n\n" +
 
-ganadorBusqueda;
+                ganadorBusqueda;
 
         JOptionPane.showMessageDialog(
                 this,
@@ -891,16 +1014,17 @@ ganadorBusqueda;
         );
     }
 
-private void exportarFavoritosEncriptados() {
+    private void exportarFavoritosEncriptados() {
 
-    favoritos.exportarFavoritosEncriptados(abbReal);
+        favoritos.exportarFavoritosEncriptados(abbReal);
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Playlist exportada y encriptada usando recorridos ABB:\n\n" +
-            "favoritos_abb_recorridos_encriptados.txt"
-    );
-}
+        JOptionPane.showMessageDialog(
+                this,
+                "Playlist exportada y encriptada usando recorridos ABB:\n\n" +
+                "favoritos_abb_recorridos_encriptados.txt"
+        );
+    }
+
     private void importarFavoritosEncriptados() {
 
         favoritos.importarFavoritosEncriptados();
@@ -1184,115 +1308,115 @@ private void exportarFavoritosEncriptados() {
         }
     }
 
-   private void reproducirSiguiente() {
+    private void reproducirSiguiente() {
 
-    if (cancionesMostradas.isEmpty()) {
-        return;
-    }
+        if (cancionesMostradas.isEmpty()) {
+            return;
+        }
 
-    if (modoAleatorio) {
+        if (modoAleatorio) {
 
-        Random random = new Random();
+            Random random = new Random();
 
-        indiceActual = random.nextInt(cancionesMostradas.size());
+            indiceActual = random.nextInt(cancionesMostradas.size());
+
+            listaCanciones.setSelectedIndex(indiceActual);
+            actualizarInformacion();
+
+            Cancion actual = cancionesMostradas.get(indiceActual);
+            dobleReal.posicionarEn(actual.getNombre());
+
+            reproductor.reproducir(actual.getRuta());
+            registrarReproduccion(actual);
+
+            return;
+        }
+
+        Cancion actualListaDoble = cancionesMostradas.get(indiceActual);
+        dobleReal.posicionarEn(actualListaDoble.getNombre());
+
+        Cancion siguiente = dobleReal.avanzar();
+
+        if (siguiente == null) {
+            return;
+        }
+
+        for (int i = 0; i < cancionesMostradas.size(); i++) {
+
+            if (cancionesMostradas.get(i).getNombre().equalsIgnoreCase(siguiente.getNombre())) {
+                indiceActual = i;
+                break;
+            }
+        }
+
+        if (!modoCircular && indiceActual == 0) {
+            reproductor.detener();
+            sliderProgreso.setValue(0);
+            lblTiempoActual.setText("00:00");
+            return;
+        }
 
         listaCanciones.setSelectedIndex(indiceActual);
         actualizarInformacion();
 
-        Cancion actual = cancionesMostradas.get(indiceActual);
-        dobleReal.posicionarEn(actual.getNombre());
-
-        reproductor.reproducir(actual.getRuta());
-        registrarReproduccion(actual);
-
-        return;
+        reproductor.reproducir(siguiente.getRuta());
+        registrarReproduccion(siguiente);
     }
-
-    Cancion actualListaDoble = cancionesMostradas.get(indiceActual);
-    dobleReal.posicionarEn(actualListaDoble.getNombre());
-
-    Cancion siguiente = dobleReal.avanzar();
-
-    if (siguiente == null) {
-        return;
-    }
-
-    for (int i = 0; i < cancionesMostradas.size(); i++) {
-
-        if (cancionesMostradas.get(i).getNombre().equalsIgnoreCase(siguiente.getNombre())) {
-            indiceActual = i;
-            break;
-        }
-    }
-
-    if (!modoCircular && indiceActual == 0) {
-        reproductor.detener();
-        sliderProgreso.setValue(0);
-        lblTiempoActual.setText("00:00");
-        return;
-    }
-
-    listaCanciones.setSelectedIndex(indiceActual);
-    actualizarInformacion();
-
-    reproductor.reproducir(siguiente.getRuta());
-    registrarReproduccion(siguiente);
-}
 
     private void reproducirAnterior() {
 
-    if (cancionesMostradas.isEmpty()) {
-        return;
-    }
-
-    if (modoAleatorio) {
-
-        Random random = new Random();
-
-        indiceActual = random.nextInt(cancionesMostradas.size());
-
-        listaCanciones.setSelectedIndex(indiceActual);
-        actualizarInformacion();
-
-        Cancion actual = cancionesMostradas.get(indiceActual);
-        dobleReal.posicionarEn(actual.getNombre());
-
-        reproductor.reproducir(actual.getRuta());
-        registrarReproduccion(actual);
-
-        return;
-    }
-
-    Cancion actualListaDoble = cancionesMostradas.get(indiceActual);
-    dobleReal.posicionarEn(actualListaDoble.getNombre());
-
-    Cancion anterior = dobleReal.retroceder();
-
-    if (anterior == null) {
-        return;
-    }
-
-    for (int i = 0; i < cancionesMostradas.size(); i++) {
-
-        if (cancionesMostradas.get(i).getNombre().equalsIgnoreCase(anterior.getNombre())) {
-            indiceActual = i;
-            break;
+        if (cancionesMostradas.isEmpty()) {
+            return;
         }
-    }
 
-    if (!modoCircular && indiceActual == cancionesMostradas.size() - 1) {
-        indiceActual = 0;
+        if (modoAleatorio) {
+
+            Random random = new Random();
+
+            indiceActual = random.nextInt(cancionesMostradas.size());
+
+            listaCanciones.setSelectedIndex(indiceActual);
+            actualizarInformacion();
+
+            Cancion actual = cancionesMostradas.get(indiceActual);
+            dobleReal.posicionarEn(actual.getNombre());
+
+            reproductor.reproducir(actual.getRuta());
+            registrarReproduccion(actual);
+
+            return;
+        }
+
+        Cancion actualListaDoble = cancionesMostradas.get(indiceActual);
+        dobleReal.posicionarEn(actualListaDoble.getNombre());
+
+        Cancion anterior = dobleReal.retroceder();
+
+        if (anterior == null) {
+            return;
+        }
+
+        for (int i = 0; i < cancionesMostradas.size(); i++) {
+
+            if (cancionesMostradas.get(i).getNombre().equalsIgnoreCase(anterior.getNombre())) {
+                indiceActual = i;
+                break;
+            }
+        }
+
+        if (!modoCircular && indiceActual == cancionesMostradas.size() - 1) {
+            indiceActual = 0;
+            listaCanciones.setSelectedIndex(indiceActual);
+            actualizarInformacion();
+            return;
+        }
+
         listaCanciones.setSelectedIndex(indiceActual);
         actualizarInformacion();
-        return;
+
+        reproductor.reproducir(anterior.getRuta());
+        registrarReproduccion(anterior);
     }
-
-    listaCanciones.setSelectedIndex(indiceActual);
-    actualizarInformacion();
-
-    reproductor.reproducir(anterior.getRuta());
-    registrarReproduccion(anterior);
-}
 
     private void actualizarInformacion() {
 
@@ -1365,7 +1489,7 @@ private void exportarFavoritosEncriptados() {
             setPreferredSize(new Dimension(280, 280));
             setMaximumSize(new Dimension(280, 280));
             setMinimumSize(new Dimension(280, 280));
-            setBackground(new Color(18, 18, 18));
+            setBackground(COLOR_FONDO);
         }
 
         public void cargarPortada(String rutaPortada) {
