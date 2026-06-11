@@ -1,10 +1,9 @@
 digraph ABB {
 node [shape=circle, style=filled, fillcolor=lightblue];
-"Bury the Light" -> "BATTLE-1 (VERGIL) from Devil May Cry 3 SE";
-"BATTLE-1 (VERGIL) from Devil May Cry 3 SE";
-"Bury the Light" -> "Bury the Light (Game Edit)";
-"Bury the Light (Game Edit)" -> "Devil May Cry HR /HM Ver. (Devil May Cry 5 SE Edit)";
-"Devil May Cry HR /HM Ver. (Devil May Cry 5 SE Edit)" -> "Wordless Chorus";
+"HOLLYWOOD" -> "daño";
+"daño" -> "DOS DÍAS";
+"DOS DÍAS";
+"HOLLYWOOD" -> "Wordless Chorus";
 "Wordless Chorus" -> "Off The Record";
 "Off The Record" -> "Outta My System";
 "Outta My System";

@@ -3,6 +3,7 @@ package arboles;
 import modelos.Cancion;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AVL {
 
@@ -401,6 +402,75 @@ private void generarDotRecursivo(NodoAVL nodo, FileWriter writer) throws IOExcep
 
             writer.write("\"" + nombreNodo + "\";\n");
         }
+    }
+}
+
+public ArrayList<Cancion> buscarParcial(String texto) {
+
+    ArrayList<Cancion> resultados = new ArrayList<>();
+
+    buscarParcialRecursivo(raiz, texto.toLowerCase(), resultados);
+
+    return resultados;
+}
+
+private void buscarParcialRecursivo(NodoAVL nodo, String texto, ArrayList<Cancion> resultados) {
+
+    if (nodo == null) {
+        return;
+    }
+
+    buscarParcialRecursivo(nodo.izquierda, texto, resultados);
+
+    if (nodo.cancion.getNombre().toLowerCase().contains(texto)) {
+        resultados.add(nodo.cancion);
+    }
+
+    buscarParcialRecursivo(nodo.derecha, texto, resultados);
+}
+
+public String obtenerRecorridosTexto() {
+
+    StringBuilder texto = new StringBuilder();
+
+    texto.append("RECORRIDOS AVL\n\n");
+
+    texto.append("INORDEN:\n");
+    recorridoInordenTexto(raiz, texto);
+
+    texto.append("\nPREORDEN:\n");
+    recorridoPreordenTexto(raiz, texto);
+
+    texto.append("\nPOSTORDEN:\n");
+    recorridoPostordenTexto(raiz, texto);
+
+    return texto.toString();
+}
+
+private void recorridoInordenTexto(NodoAVL nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+        recorridoInordenTexto(nodo.izquierda, texto);
+        texto.append(nodo.cancion.getNombre()).append("\n");
+        recorridoInordenTexto(nodo.derecha, texto);
+    }
+}
+
+private void recorridoPreordenTexto(NodoAVL nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+        texto.append(nodo.cancion.getNombre()).append("\n");
+        recorridoPreordenTexto(nodo.izquierda, texto);
+        recorridoPreordenTexto(nodo.derecha, texto);
+    }
+}
+
+private void recorridoPostordenTexto(NodoAVL nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+        recorridoPostordenTexto(nodo.izquierda, texto);
+        recorridoPostordenTexto(nodo.derecha, texto);
+        texto.append(nodo.cancion.getNombre()).append("\n");
     }
 }
 

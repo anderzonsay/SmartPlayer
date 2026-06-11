@@ -98,102 +98,108 @@ public class PlaylistFavoritos {
             System.out.println("Error al cargar favoritos");
         }
     }
-    
+
     public void eliminarFavorito(Cancion cancion) {
 
-    if (cancion == null) {
-        return;
-    }
-
-    nombresFavoritos.remove(cancion.getNombre());
-
-    guardarFavoritos();
-
-    System.out.println("Favorito eliminado: " + cancion.getNombre());
-}
-   
-    public void exportarFavoritosEncriptados() {
-
-    try {
-
-        Encriptador encriptador = new Encriptador();
-
-        FileWriter writer = new FileWriter("favoritos_encriptados.txt");
-
-        for (String nombre : nombresFavoritos) {
-
-            String textoEncriptado = encriptador.encriptar(nombre);
-
-            writer.write(textoEncriptado + "\n");
-        }
-
-        writer.close();
-
-        System.out.println("Favoritos encriptados exportados correctamente");
-
-    } catch (IOException e) {
-
-        System.out.println("Error al exportar favoritos encriptados");
-    }
-}
-
-public void importarFavoritosEncriptados() {
-
-    try {
-
-        Encriptador encriptador = new Encriptador();
-
-        File archivo = new File("favoritos_encriptados.txt");
-
-        if (!archivo.exists()) {
-            System.out.println("No existe favoritos_encriptados.txt");
+        if (cancion == null) {
             return;
         }
 
-        BufferedReader reader = new BufferedReader(new FileReader(archivo));
-
-        String linea;
-
-        while ((linea = reader.readLine()) != null) {
-
-            String desencriptado = encriptador.desencriptar(linea);
-
-            if (!nombresFavoritos.contains(desencriptado)) {
-                nombresFavoritos.add(desencriptado);
-            }
-        }
-
-        reader.close();
+        nombresFavoritos.remove(cancion.getNombre());
 
         guardarFavoritos();
 
-        System.out.println("Favoritos encriptados importados correctamente");
+        System.out.println("Favorito eliminado: " + cancion.getNombre());
+    }
 
-    } catch (IOException e) {
+    public void eliminarPlaylistCompleta() {
 
-        System.out.println("Error al importar favoritos encriptados");
+        nombresFavoritos.clear();
+        guardarFavoritos();
+
+        System.out.println("Playlist de favoritos eliminada completamente");
+    }
+
+    public void exportarFavoritosEncriptados() {
+
+        try {
+
+            Encriptador encriptador = new Encriptador();
+
+            FileWriter writer = new FileWriter("favoritos_encriptados.txt");
+
+            for (String nombre : nombresFavoritos) {
+
+                String textoEncriptado = encriptador.encriptar(nombre);
+
+                writer.write(textoEncriptado + "\n");
+            }
+
+            writer.close();
+
+            System.out.println("Favoritos encriptados exportados correctamente");
+
+        } catch (IOException e) {
+
+            System.out.println("Error al exportar favoritos encriptados");
+        }
+    }
+
+    public void importarFavoritosEncriptados() {
+
+        try {
+
+            Encriptador encriptador = new Encriptador();
+
+            File archivo = new File("favoritos_encriptados.txt");
+
+            if (!archivo.exists()) {
+                System.out.println("No existe favoritos_encriptados.txt");
+                return;
+            }
+
+            BufferedReader reader = new BufferedReader(new FileReader(archivo));
+
+            String linea;
+
+            while ((linea = reader.readLine()) != null) {
+
+                String desencriptado = encriptador.desencriptar(linea);
+
+                if (!nombresFavoritos.contains(desencriptado)) {
+                    nombresFavoritos.add(desencriptado);
+                }
+            }
+
+            reader.close();
+
+            guardarFavoritos();
+
+            System.out.println("Favoritos encriptados importados correctamente");
+
+        } catch (IOException e) {
+
+            System.out.println("Error al importar favoritos encriptados");
+        }
+    }
+
+    public void comprimirFavoritos() {
+
+        Compresor compresor = new Compresor();
+
+        compresor.comprimirArchivo(
+                "favoritos.txt",
+                "favoritos.comp"
+        );
+    }
+
+    public void descomprimirFavoritos() {
+
+        Compresor compresor = new Compresor();
+
+        compresor.descomprimirArchivo(
+                "favoritos.comp",
+                "favoritos_descomprimidos.txt"
+        );
     }
 }
-
-public void comprimirFavoritos() {
-
-    Compresor compresor = new Compresor();
-
-    compresor.comprimirArchivo(
-            "favoritos.txt",
-            "favoritos.comp"
-    );
-}
-
-public void descomprimirFavoritos() {
-
-    Compresor compresor = new Compresor();
-
-    compresor.descomprimirArchivo(
-            "favoritos.comp",
-            "favoritos_descomprimidos.txt"
-    );
-}
-    
-}
-

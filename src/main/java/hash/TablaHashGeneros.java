@@ -20,6 +20,10 @@ public class TablaHashGeneros {
 
     private int funcionHash(String genero) {
 
+        if (genero == null || genero.isEmpty()) {
+            genero = "Desconocido";
+        }
+
         int suma = 0;
 
         for (int i = 0; i < genero.length(); i++) {
@@ -31,9 +35,32 @@ public class TablaHashGeneros {
 
     public void insertar(Cancion cancion) {
 
+        if (cancion == null) {
+            return;
+        }
+
         int posicion = funcionHash(cancion.getGenero());
 
         tabla[posicion].add(cancion);
+    }
+
+    public void eliminar(String nombreCancion) {
+
+        for (int i = 0; i < tamaño; i++) {
+
+            for (int j = 0; j < tabla[i].size(); j++) {
+
+                if (tabla[i].get(j).getNombre().equalsIgnoreCase(nombreCancion)) {
+
+                    tabla[i].remove(j);
+
+                    System.out.println("Canción eliminada de hash géneros");
+                    return;
+                }
+            }
+        }
+
+        System.out.println("Canción no encontrada en hash géneros");
     }
 
     public void mostrarTabla() {
@@ -67,12 +94,17 @@ public class TablaHashGeneros {
 
         ArrayList<Cancion> resultados = new ArrayList<>();
 
-        int posicion = funcionHash(genero);
+        if (genero == null) {
+            genero = "";
+        }
 
-        for (Cancion c : tabla[posicion]) {
+        for (int i = 0; i < tamaño; i++) {
 
-            if (c.getGenero().equalsIgnoreCase(genero)) {
-                resultados.add(c);
+            for (Cancion c : tabla[i]) {
+
+                if (c.getGenero().toLowerCase().contains(genero.toLowerCase())) {
+                    resultados.add(c);
+                }
             }
         }
 

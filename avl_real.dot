@@ -1,13 +1,11 @@
 digraph AVL {
 node [shape=circle, style=filled, fillcolor=lightgreen];
-"Devil May Cry HR /HM Ver. (Devil May Cry 5 SE Edit)" -> "Bury the Light";
-"Bury the Light" -> "BATTLE-1 (VERGIL) from Devil May Cry 3 SE";
-"BATTLE-1 (VERGIL) from Devil May Cry 3 SE";
-"Bury the Light" -> "Bury the Light (Game Edit)";
-"Bury the Light (Game Edit)";
-"Devil May Cry HR /HM Ver. (Devil May Cry 5 SE Edit)" -> "Outta My System";
-"Outta My System" -> "Off The Record";
-"Off The Record";
-"Outta My System" -> "Wordless Chorus";
-"Wordless Chorus";
+"Off The Record" -> "DOS DÍAS";
+"DOS DÍAS" -> "daño";
+"daño";
+"DOS DÍAS" -> "HOLLYWOOD";
+"HOLLYWOOD";
+"Off The Record" -> "Wordless Chorus";
+"Wordless Chorus" -> "Outta My System";
+"Outta My System";
 }

@@ -30,7 +30,7 @@ public class ListaCircular {
     public void mostrar() {
 
         if (ultimo == null) {
-            System.out.println("Lista circular vacia");
+            System.out.println("Lista circular vacía");
             return;
         }
 
@@ -60,5 +60,40 @@ public class ListaCircular {
             aux = aux.siguiente;
         }
     }
-}
 
+    public void eliminar(String nombre) {
+
+        if (ultimo == null) {
+            System.out.println("Lista circular vacía");
+            return;
+        }
+
+        NodoCircular actual = ultimo.siguiente;
+        NodoCircular anterior = ultimo;
+
+        do {
+
+            if (actual.cancion.getNombre().equalsIgnoreCase(nombre)) {
+
+                if (actual == ultimo && actual.siguiente == ultimo) {
+                    ultimo = null;
+                } else {
+                    anterior.siguiente = actual.siguiente;
+
+                    if (actual == ultimo) {
+                        ultimo = anterior;
+                    }
+                }
+
+                System.out.println("Canción eliminada de lista circular");
+                return;
+            }
+
+            anterior = actual;
+            actual = actual.siguiente;
+
+        } while (actual != ultimo.siguiente);
+
+        System.out.println("Canción no encontrada en lista circular");
+    }
+}

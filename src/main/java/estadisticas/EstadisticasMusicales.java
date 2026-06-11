@@ -18,7 +18,6 @@ public class EstadisticasMusicales {
     }
 
     public Cancion cancionMasLarga() {
-
         Cancion mayor = canciones.get(0);
 
         for (Cancion c : canciones) {
@@ -31,7 +30,6 @@ public class EstadisticasMusicales {
     }
 
     public Cancion cancionMasCorta() {
-
         Cancion menor = canciones.get(0);
 
         for (Cancion c : canciones) {
@@ -44,7 +42,6 @@ public class EstadisticasMusicales {
     }
 
     public double promedioDuracion() {
-
         double suma = 0;
 
         for (Cancion c : canciones) {
@@ -55,7 +52,6 @@ public class EstadisticasMusicales {
     }
 
     public double duracionTotal() {
-
         double suma = 0;
 
         for (Cancion c : canciones) {
@@ -66,7 +62,6 @@ public class EstadisticasMusicales {
     }
 
     public double tamañoTotalMB() {
-
         double suma = 0;
 
         for (Cancion c : canciones) {
@@ -77,7 +72,6 @@ public class EstadisticasMusicales {
     }
 
     public int totalArtistas() {
-
         HashSet<String> artistas = new HashSet<>();
 
         for (Cancion c : canciones) {
@@ -88,7 +82,6 @@ public class EstadisticasMusicales {
     }
 
     public int totalGeneros() {
-
         HashSet<String> generos = new HashSet<>();
 
         for (Cancion c : canciones) {
@@ -104,7 +97,6 @@ public class EstadisticasMusicales {
     }
 
     public String artistaConMasCanciones() {
-
         HashMap<String, Integer> contador = new HashMap<>();
 
         for (Cancion c : canciones) {
@@ -126,8 +118,58 @@ public class EstadisticasMusicales {
         return mayorArtista + " (" + mayorCantidad + " canciones)";
     }
 
-    public String generoMasFrecuente() {
+    public String artistaMasEscuchado() {
+        HashMap<String, Integer> contador = new HashMap<>();
 
+        for (Cancion c : canciones) {
+
+            String artista = c.getArtista();
+
+            contador.put(
+                    artista,
+                    contador.getOrDefault(artista, 0) + c.getReproducciones()
+            );
+        }
+
+        String mayorArtista = "Sin reproducciones";
+        int mayorReproducciones = 0;
+
+        for (String artista : contador.keySet()) {
+
+            if (contador.get(artista) > mayorReproducciones) {
+                mayorReproducciones = contador.get(artista);
+                mayorArtista = artista;
+            }
+        }
+
+        return mayorArtista + " (" + mayorReproducciones + " reproducciones)";
+    }
+
+    public String cancionMasReproducida() {
+
+        if (canciones.isEmpty()) {
+            return "No disponible";
+        }
+
+        Cancion mayor = canciones.get(0);
+
+        for (Cancion c : canciones) {
+
+            if (c.getReproducciones() > mayor.getReproducciones()) {
+                mayor = c;
+            }
+        }
+
+        if (mayor.getReproducciones() == 0) {
+            return "Todavía no hay reproducciones registradas";
+        }
+
+        return mayor.getNombre() + " - " +
+               mayor.getArtista() + " (" +
+               mayor.getReproducciones() + " reproducciones)";
+    }
+
+    public String generoMasFrecuente() {
         HashMap<String, Integer> contador = new HashMap<>();
 
         for (Cancion c : canciones) {
@@ -158,7 +200,6 @@ public class EstadisticasMusicales {
     }
 
     public int cantidadDuplicados() {
-
         HashSet<String> nombres = new HashSet<>();
         int duplicados = 0;
 
@@ -178,7 +219,6 @@ public class EstadisticasMusicales {
     }
 
     public String listarDuplicados() {
-
         HashSet<String> vistos = new HashSet<>();
         HashSet<String> duplicados = new HashSet<>();
 
@@ -207,6 +247,38 @@ public class EstadisticasMusicales {
 
         return texto;
     }
+
+    public String albumConMasCanciones() {
+        HashMap<String, Integer> contador = new HashMap<>();
+
+        for (Cancion c : canciones) {
+
+            String album = c.getAlbum();
+
+            if (album != null && !album.equalsIgnoreCase("Desconocido")) {
+
+                contador.put(
+                        album,
+                        contador.getOrDefault(album, 0) + 1
+                );
+            }
+        }
+
+        if (contador.isEmpty()) {
+            return "No disponible";
+        }
+
+        String mejorAlbum = "";
+        int mayor = 0;
+
+        for (String album : contador.keySet()) {
+
+            if (contador.get(album) > mayor) {
+                mayor = contador.get(album);
+                mejorAlbum = album;
+            }
+        }
+
+        return mejorAlbum + " (" + mayor + " canciones)";
+    }
 }
-
-

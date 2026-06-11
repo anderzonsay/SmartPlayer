@@ -40,22 +40,22 @@ public class Main {
         graphviz.GeneradorImagenGraphviz generador =
                 new graphviz.GeneradorImagenGraphviz();
 
-        generador.generarImagen(
-                "abb_real.dot",
-                "abb_real.png"
-        );
-
-        generador.generarImagen(
-                "avl_real.dot",
-                "avl_real.png"
-        );
+        generador.generarImagen("abb_real.dot", "abb_real.png");
+        generador.generarImagen("avl_real.dot", "avl_real.png");
 
         javax.swing.SwingUtilities.invokeLater(() -> {
 
             new interfaz.VentanaPrincipal(
                     listaReal.convertirAArrayList(),
                     hashArtistasReal,
-                    hashGenerosReal
+                    hashGenerosReal,
+                    new pilas.Pila(),
+                    new colas.Cola(),
+                    abbReal,
+                    avlReal,
+                    listaReal,
+                    dobleReal,
+                    circularReal
             ).setVisible(true);
         });
     }

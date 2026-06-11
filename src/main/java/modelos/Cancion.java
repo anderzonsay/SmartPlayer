@@ -13,6 +13,7 @@ public class Cancion {
     private double tamaño;
 
     private int año;
+    private int reproducciones;
 
     public Cancion(String nombre,
                    String artista,
@@ -32,6 +33,7 @@ public class Cancion {
         this.duracion = duracion;
         this.tamaño = tamaño;
         this.año = año;
+        this.reproducciones = 0;
     }
 
     public String getNombre() {
@@ -68,6 +70,14 @@ public class Cancion {
 
     public int getAño() {
         return año;
+    }
+
+    public int getReproducciones() {
+        return reproducciones;
+    }
+
+    public void aumentarReproduccion() {
+        reproducciones++;
     }
 
     public void setArtista(String artista) {
@@ -118,9 +128,7 @@ public class Cancion {
                "\nAlbum: " + album +
                "\nGenero: " + genero +
                "\nDuracion: " + getDuracionFormateada() +
+               "\nReproducciones: " + reproducciones +
                "\n";
     }
 }
-
-    
-
