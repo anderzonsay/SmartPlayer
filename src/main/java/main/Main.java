@@ -45,18 +45,18 @@ public class Main {
 
         javax.swing.SwingUtilities.invokeLater(() -> {
 
-            new interfaz.VentanaPrincipal(
-                    listaReal.convertirAArrayList(),
-                    hashArtistasReal,
-                    hashGenerosReal,
-                    new pilas.Pila(),
-                    new colas.Cola(),
-                    abbReal,
-                    avlReal,
-                    listaReal,
-                    dobleReal,
-                    circularReal
-            ).setVisible(true);
+          new interfaz.VentanaPrincipal(
+        listaReal.convertirAArrayList(),
+        hashArtistasReal,
+        hashGenerosReal,
+        new pilas.Pila(),
+        colaReal,
+        abbReal,
+        avlReal,
+        listaReal,
+        dobleReal,
+        circularReal
+).setVisible(true);
         });
     }
 }

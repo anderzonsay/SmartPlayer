@@ -891,16 +891,16 @@ ganadorBusqueda;
         );
     }
 
-    private void exportarFavoritosEncriptados() {
+private void exportarFavoritosEncriptados() {
 
-        favoritos.exportarFavoritosEncriptados();
+    favoritos.exportarFavoritosEncriptados(abbReal);
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Favoritos exportados a:\nfavoritos_encriptados.txt"
-        );
-    }
-
+    JOptionPane.showMessageDialog(
+            this,
+            "Playlist exportada y encriptada usando recorridos ABB:\n\n" +
+            "favoritos_abb_recorridos_encriptados.txt"
+    );
+}
     private void importarFavoritosEncriptados() {
 
         favoritos.importarFavoritosEncriptados();

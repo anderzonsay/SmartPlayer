@@ -334,5 +334,68 @@ private void recorridoPostordenTexto(NodoABB nodo, StringBuilder texto) {
     }
 }
 
+public String obtenerInOrdenTexto() {
+
+    StringBuilder texto = new StringBuilder();
+
+    obtenerInOrdenTextoRec(raiz, texto);
+
+    return texto.toString();
+}
+
+private void obtenerInOrdenTextoRec(NodoABB nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+
+        obtenerInOrdenTextoRec(nodo.izquierda, texto);
+
+        texto.append(nodo.cancion.getNombre()).append("\n");
+
+        obtenerInOrdenTextoRec(nodo.derecha, texto);
+    }
+}
+
+public String obtenerPreOrdenTexto() {
+
+    StringBuilder texto = new StringBuilder();
+
+    obtenerPreOrdenTextoRec(raiz, texto);
+
+    return texto.toString();
+}
+
+private void obtenerPreOrdenTextoRec(NodoABB nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+
+        texto.append(nodo.cancion.getNombre()).append("\n");
+
+        obtenerPreOrdenTextoRec(nodo.izquierda, texto);
+
+        obtenerPreOrdenTextoRec(nodo.derecha, texto);
+    }
+}
+
+public String obtenerPostOrdenTexto() {
+
+    StringBuilder texto = new StringBuilder();
+
+    obtenerPostOrdenTextoRec(raiz, texto);
+
+    return texto.toString();
+}
+
+private void obtenerPostOrdenTextoRec(NodoABB nodo, StringBuilder texto) {
+
+    if (nodo != null) {
+
+        obtenerPostOrdenTextoRec(nodo.izquierda, texto);
+
+        obtenerPostOrdenTextoRec(nodo.derecha, texto);
+
+        texto.append(nodo.cancion.getNombre()).append("\n");
+    }
+}
+
 }
 

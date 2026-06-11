@@ -10,6 +10,7 @@ public class PlaylistFavoritos {
 
     private ArrayList<String> nombresFavoritos;
     private final String archivoFavoritos = "favoritos.txt";
+    private final String archivoEncriptado = "favoritos_encriptados.txt";
 
     public PlaylistFavoritos() {
 
@@ -120,28 +121,41 @@ public class PlaylistFavoritos {
         System.out.println("Playlist de favoritos eliminada completamente");
     }
 
-    public void exportarFavoritosEncriptados() {
+    public void exportarFavoritosEncriptados(arboles.ABB abbReal) {
 
         try {
 
             Encriptador encriptador = new Encriptador();
 
-            FileWriter writer = new FileWriter("favoritos_encriptados.txt");
+            FileWriter writer = new FileWriter(archivoEncriptado);
+
+            writer.write("===== FAVORITOS ENCRIPTADOS =====\n");
 
             for (String nombre : nombresFavoritos) {
-
-                String textoEncriptado = encriptador.encriptar(nombre);
-
-                writer.write(textoEncriptado + "\n");
+                writer.write(encriptador.encriptar(nombre) + "\n");
             }
+
+            writer.write("===== FIN FAVORITOS =====\n\n");
+
+            writer.write("===== ABB INORDEN ENCRIPTADO =====\n");
+            writer.write(encriptador.encriptar(abbReal.obtenerInOrdenTexto()));
+            writer.write("\n===== FIN ABB INORDEN =====\n\n");
+
+            writer.write("===== ABB PREORDEN ENCRIPTADO =====\n");
+            writer.write(encriptador.encriptar(abbReal.obtenerPreOrdenTexto()));
+            writer.write("\n===== FIN ABB PREORDEN =====\n\n");
+
+            writer.write("===== ABB POSTORDEN ENCRIPTADO =====\n");
+            writer.write(encriptador.encriptar(abbReal.obtenerPostOrdenTexto()));
+            writer.write("\n===== FIN ABB POSTORDEN =====\n");
 
             writer.close();
 
-            System.out.println("Favoritos encriptados exportados correctamente");
+            System.out.println("Favoritos y recorridos ABB exportados encriptados correctamente");
 
         } catch (IOException e) {
 
-            System.out.println("Error al exportar favoritos encriptados");
+            System.out.println("Error al exportar favoritos y recorridos ABB encriptados");
         }
     }
 
@@ -151,23 +165,37 @@ public class PlaylistFavoritos {
 
             Encriptador encriptador = new Encriptador();
 
-            File archivo = new File("favoritos_encriptados.txt");
+            File archivo = new File(archivoEncriptado);
 
             if (!archivo.exists()) {
-                System.out.println("No existe favoritos_encriptados.txt");
+                System.out.println("No existe " + archivoEncriptado);
                 return;
             }
 
             BufferedReader reader = new BufferedReader(new FileReader(archivo));
 
             String linea;
+            boolean leyendoFavoritos = false;
 
             while ((linea = reader.readLine()) != null) {
 
-                String desencriptado = encriptador.desencriptar(linea);
+                if (linea.equals("===== FAVORITOS ENCRIPTADOS =====")) {
+                    leyendoFavoritos = true;
+                    continue;
+                }
 
-                if (!nombresFavoritos.contains(desencriptado)) {
-                    nombresFavoritos.add(desencriptado);
+                if (linea.equals("===== FIN FAVORITOS =====")) {
+                    leyendoFavoritos = false;
+                    break;
+                }
+
+                if (leyendoFavoritos && !linea.trim().isEmpty()) {
+
+                    String desencriptado = encriptador.desencriptar(linea);
+
+                    if (!nombresFavoritos.contains(desencriptado)) {
+                        nombresFavoritos.add(desencriptado);
+                    }
                 }
             }
 
@@ -175,7 +203,7 @@ public class PlaylistFavoritos {
 
             guardarFavoritos();
 
-            System.out.println("Favoritos encriptados importados correctamente");
+            System.out.println("Favoritos desencriptados e importados correctamente");
 
         } catch (IOException e) {
 
@@ -188,7 +216,7 @@ public class PlaylistFavoritos {
         Compresor compresor = new Compresor();
 
         compresor.comprimirArchivo(
-                "favoritos.txt",
+                archivoFavoritos,
                 "favoritos.comp"
         );
     }
