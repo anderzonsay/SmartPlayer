@@ -19,21 +19,6 @@ public class Main {
         hash.TablaHashGeneros hashGenerosReal =
                 new hash.TablaHashGeneros(20);
 
-        archivos.LectorMusica lector = new archivos.LectorMusica();
-
-        lector.cargarCancionesEstructuras(
-                "C:\\Users\\Aderson\\Desktop\\Musica",
-                listaReal,
-                dobleReal,
-                circularReal,
-                pilaReal,
-                colaReal,
-                abbReal,
-                avlReal,
-                hashArtistasReal,
-                hashGenerosReal
-        );
-
         abbReal.generarDot("abb_real.dot");
         avlReal.generarDot("avl_real.dot");
 
