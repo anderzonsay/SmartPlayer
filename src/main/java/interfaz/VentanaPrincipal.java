@@ -43,6 +43,8 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnFavorito, btnVerFavoritos, btnEliminarFavorito, btnEliminarPlaylist, btnEliminarCancion, btnModificarCancion;
     private JButton btnHistorial, btnAgregarCola, btnVerCola, btnReproducirCola;
     private JButton btnExportar, btnImportar, btnComprimir, btnDescomprimir;
+    private JButton btnCargarCarpeta;
+    
     private JButton btnVerABB, btnVerAVL, btnRecorridos, btnEstadisticas, btnEficiencia;
 
     private JTextField txtBuscar;
@@ -312,6 +314,8 @@ panelReproductor.add(crearPanelControlesInferior());
         btnImportar = crearBotonMenu("🔓  Importar");
         btnComprimir = crearBotonMenu("📦  Comprimir");
         btnDescomprimir = crearBotonMenu("📂  Descomprimir");
+        btnCargarCarpeta = crearBotonMenu("📁  Cargar Carpeta");
+        
 
         panel.add(crearTituloSeccion("PLAYLIST"));
         panel.add(btnFavorito);
@@ -341,6 +345,7 @@ panelReproductor.add(crearPanelControlesInferior());
         panel.add(crearSeparadorDerecha());
 
         panel.add(crearTituloSeccion("ARCHIVOS"));
+        panel.add(btnCargarCarpeta);
         panel.add(btnExportar);
         panel.add(btnImportar);
         panel.add(btnComprimir);
@@ -499,6 +504,7 @@ panelReproductor.add(crearPanelControlesInferior());
 
         btnBuscar.addActionListener(e -> buscarCanciones());
         btnLimpiar.addActionListener(e -> limpiarBusqueda());
+        
 
         btnPlay.addActionListener(e -> {
 
@@ -543,6 +549,7 @@ panelReproductor.add(crearPanelControlesInferior());
         btnImportar.addActionListener(e -> importarFavoritosEncriptados());
         btnComprimir.addActionListener(e -> comprimirFavoritos());
         btnDescomprimir.addActionListener(e -> descomprimirFavoritos());
+        btnCargarCarpeta.addActionListener(e -> cargarNuevaCarpeta());
 
         btnVerABB.addActionListener(e -> abrirImagen("abb_real.png"));
         btnVerAVL.addActionListener(e -> abrirImagen("avl_real.png"));
@@ -551,6 +558,115 @@ panelReproductor.add(crearPanelControlesInferior());
         btnEstadisticas.addActionListener(e -> mostrarEstadisticas());
         btnEficiencia.addActionListener(e -> mostrarEficiencia());
     }
+    
+    private void cargarNuevaCarpeta() {
+
+    JFileChooser selector = new JFileChooser();
+
+    selector.setDialogTitle("Seleccionar carpeta de música");
+    selector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+    int resultado = selector.showOpenDialog(this);
+
+    if (resultado != JFileChooser.APPROVE_OPTION) {
+        return;
+    }
+
+    File carpeta = selector.getSelectedFile();
+
+    reproductor.detener();
+
+    listas.ListaSimple nuevaLista = new listas.ListaSimple();
+    listas.ListaDoble nuevaDoble = new listas.ListaDoble();
+    listas.ListaCircular nuevaCircular = new listas.ListaCircular();
+
+    pilas.Pila pilaTemporal = new pilas.Pila();
+    colas.Cola nuevaCola = new colas.Cola();
+
+    arboles.ABB nuevoABB = new arboles.ABB();
+    arboles.AVL nuevoAVL = new arboles.AVL();
+
+    hash.TablaHashArtistas nuevoHashArtistas =
+            new hash.TablaHashArtistas(20);
+
+    hash.TablaHashGeneros nuevoHashGeneros =
+            new hash.TablaHashGeneros(20);
+
+    archivos.LectorMusica lector = new archivos.LectorMusica();
+
+    lector.cargarCancionesEstructuras(
+            carpeta.getAbsolutePath(),
+            nuevaLista,
+            nuevaDoble,
+            nuevaCircular,
+            pilaTemporal,
+            nuevaCola,
+            nuevoABB,
+            nuevoAVL,
+            nuevoHashArtistas,
+            nuevoHashGeneros
+    );
+
+    ArrayList<Cancion> nuevasCanciones =
+            nuevaLista.convertirAArrayList();
+
+    if (nuevasCanciones.isEmpty()) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "No se encontraron canciones MP3 en la carpeta seleccionada."
+        );
+
+        return;
+    }
+
+    this.listaReal = nuevaLista;
+    this.dobleReal = nuevaDoble;
+    this.circularReal = nuevaCircular;
+
+    this.historialReproduccion = new pilas.Pila();
+    this.colaReproduccion = nuevaCola;
+
+    this.abbReal = nuevoABB;
+    this.avlReal = nuevoAVL;
+
+    this.hashArtistas = nuevoHashArtistas;
+    this.hashGeneros = nuevoHashGeneros;
+
+    this.canciones = nuevasCanciones;
+    this.cancionesMostradas = new ArrayList<>(nuevasCanciones);
+
+    this.indiceActual = 0;
+
+    llenarModeloLista(cancionesMostradas);
+
+    try {
+
+        abbReal.generarDot("abb_real.dot");
+        avlReal.generarDot("avl_real.dot");
+
+        graphviz.GeneradorImagenGraphviz generador =
+                new graphviz.GeneradorImagenGraphviz();
+
+        generador.generarImagen("abb_real.dot", "abb_real.png");
+        generador.generarImagen("avl_real.dot", "avl_real.png");
+
+    } catch (Exception e) {
+
+        System.out.println("No se pudieron generar las imágenes de los árboles.");
+    }
+
+    limpiarBusqueda();
+    actualizarInformacion();
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Carpeta cargada correctamente:\n\n" +
+            carpeta.getAbsolutePath() +
+            "\n\nCanciones encontradas: " + canciones.size()
+    );
+}
+    
 
     private void activarDesactivarAleatorio() {
 
@@ -576,6 +692,7 @@ panelReproductor.add(crearPanelControlesInferior());
         }
     }
 
+    
     private void activarDesactivarCircular() {
 
         modoCircular = !modoCircular;
@@ -1551,4 +1668,5 @@ panelReproductor.add(crearPanelControlesInferior());
             }
         }
     }
+ 
 }
